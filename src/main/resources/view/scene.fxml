@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity"
+  minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+  xmlns="http://javafx.com/javafx/8" fx:controller="view.ShogiGUI">
+  <children>
+    <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <bottom>
+        <HBox BorderPane.alignment="CENTER" prefHeight="38.0" prefWidth="600.0">
+          <children>
+            <TextField prefHeight="27.0" prefWidth="275.0" fx:id="txtCommand"/>
+            <Button mnemonicParsing="false" onAction="#submitCommand" text="Submit"/>
+          </children>
+        </HBox>
+      </bottom>
+      <left>
+        <TextArea BorderPane.alignment="CENTER" editable="false" prefHeight="362.0"
+          prefWidth="249.0" fx:id="txtCommandOutput"/>
+      </left>
+      <center>
+        <TextArea BorderPane.alignment="CENTER" editable="false" prefHeight="200.0"
+          prefWidth="200.0"/>
+      </center>
+    </BorderPane>
+  </children>
+</StackPane>

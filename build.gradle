@@ -9,7 +9,7 @@ plugins {
 group 'com.josephbaca'
 version '1.0'
 
-mainClassName = 'main.MainApp'
+mainClassName = 'controller.ShogiController'
 
 sourceCompatibility = 11
 targetCompatibility = 11
