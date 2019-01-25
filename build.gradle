@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'net.ltgt.errorprone' version '0.6.1'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.5'
+}
+
+group 'com.josephbaca'
+version '1.0'
+
+mainClassName = 'main.MainApp'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+checkstyle {
+    toolVersion = '8.13'
+    maxWarnings = 0
+    maxErrors = 0
+}
+
+test {
+    useJUnitPlatform() // necessary to activate Gradle's JUnit5 support
+    outputs.upToDateWhen { false }
+
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+    jvmArgs = ["-Xss128m"] // bigger stack as well
+}
+
+dependencies {
+
+    // Error prone compiler
+    errorprone 'com.google.errorprone:error_prone_core:2.3.2'
+
+    // Annotations to help the IDE find bugs
+    compile 'org.jetbrains:annotations:15.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'com.google.code.findbugs:annotations:3.0.1'
+    compile 'com.google.errorprone:error_prone_annotations:2.3.2'
+
+    // Logging
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25' // Logger API
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3' // LogBack
+
+    // Testing libraries: these are only visible from our test code, not the "main" code
+    testCompile 'org.mockito:mockito-core:2.19.0' // mock testing library
+    testCompile 'org.quicktheories:quicktheories:0.25' // pattern-based testing library
+
+    // JUnit5 support
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+}
