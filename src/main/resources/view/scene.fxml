@@ -25,7 +25,7 @@
       </left>
       <center>
         <TextArea BorderPane.alignment="CENTER" editable="false" prefHeight="200.0"
-          prefWidth="200.0"/>
+          prefWidth="200.0" fx:id="txtBoard"/>
       </center>
     </BorderPane>
   </children>

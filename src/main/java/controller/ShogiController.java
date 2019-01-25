@@ -3,18 +3,33 @@ package controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import model.Model2ViewAdapter;
 import model.ShogiModel;
 import view.ShogiGUI;
 import view.View2ModelAdapter;
 
+/**
+ * Main application controller the initializes the engine and an interface for it.
+ */
 public class ShogiController extends Application {
 
-  ShogiGUI shogiGUI;
+  /**
+   * The graphical interface.
+   */
+  private ShogiGUI shogiGUI;
 
-  ShogiModel shogiModel;
+  /**
+   * The internal game representation engine.
+   */
+  private ShogiModel shogiModel;
 
+  /**
+   * Launches the game.
+   *
+   * @param args to launch with.
+   */
   public static void main(String[] args) {
     launch(args);
   }
@@ -35,6 +50,15 @@ public class ShogiController extends Application {
     shogiGUI = loader.getController();
     shogiGUI.setView2ModelAdapter(new View2ModelAdapter() {
 
+      @Override
+      public void updateBoard(TextArea textArea) {
+        shogiModel.updateBoard(textArea);
+      }
+
+      @Override
+      public String processCommand(String command) {
+        return shogiModel.processCommand(command);
+      }
     });
 
     // Set up the model
