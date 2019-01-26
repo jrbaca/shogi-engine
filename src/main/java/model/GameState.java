@@ -20,6 +20,9 @@ class GameState {
     this.currentPlayer = currentPlayer;
   }
 
+  /**
+   * Returns a new {@link GameState} where all pieces are in their correct initial position.
+   */
   static GameState setupNewGame() {
     Board board = new Board()
         .setPiece(1, 1, new Lance())

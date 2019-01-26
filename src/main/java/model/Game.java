@@ -19,18 +19,6 @@ class Game {
     gameHistoryReversed.add(GameState.setupNewGame());
   }
 
-  private GameState getCurrentGameState() {
-    return gameHistoryReversed.get(0);
-  }
-
-  private void addNewGameState(GameState gameState) {
-    gameHistoryReversed.add(0, gameState);
-  }
-
-  String getStringRepresentation() {
-    return getCurrentGameState().toString();
-  }
-
   /**
    * Moves a piece from a position to another position.
    *
@@ -45,5 +33,17 @@ class Game {
       boolean promotes) {
     addNewGameState(getCurrentGameState()
         .movePiece(player, fromFile, fromRank, toFile, toRank, promotes));
+  }
+
+  String getStringRepresentation() {
+    return getCurrentGameState().toString();
+  }
+
+  private GameState getCurrentGameState() {
+    return gameHistoryReversed.get(0);
+  }
+
+  private void addNewGameState(GameState gameState) {
+    gameHistoryReversed.add(0, gameState);
   }
 }

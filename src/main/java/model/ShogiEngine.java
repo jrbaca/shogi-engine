@@ -1,7 +1,6 @@
 package model;
 
 import javafx.scene.control.TextArea;
-import model.GameState.Player;
 
 /**
  * The Shogi engine. Contains the logic to process commands and manipulate game state. Dispatches
@@ -31,34 +30,7 @@ public class ShogiEngine {
    * @return A String representation of the result
    */
   public String processCommand(String command) {
-    String[] args = command.split(" ");
-
-    Player player;
-    if (args[0].equals("white")) {
-      player = Player.gote;
-    } else if (args[0].equals("black")) {
-      player = Player.sente;
-    } else {
-      return "Unrecognised command";
-    }
-
-    String verb = args[1];
-    String pos1 = args[2];
-
-    if (verb.equals("moves")) {
-      String pos2 = args[3];
-      boolean promotes = args.length == 5 && args[4].equals("promotes");
-      game.movePiece(player, Integer.valueOf(pos1.substring(0, 1)),
-          Integer.valueOf(pos1.substring(1, 2)), Integer.valueOf(pos2.substring(0, 1)),
-          Integer.valueOf(pos2.substring(1, 2)),
-          promotes);
-      return "Moved piece";
-    } else if (verb.equals("drops")) {
-      //TODO this
-      return "Gonna drop";
-    } else {
-      return "Unrecognised command";
-    }
+    return Input.processCommand(command).run(game);
   }
 
   /**

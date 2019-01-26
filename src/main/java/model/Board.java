@@ -22,6 +22,9 @@ class Board {
     return board[file - 1][rank - 1];
   }
 
+  /**
+   * Returns a new copy of the board for use in the next {@link GameState}.
+   */
   private Piece[][] getBoardCopy() {
     Piece[][] newBoard = new Piece[board.length][];
     for (int i = 0; i < board.length; i++) {
