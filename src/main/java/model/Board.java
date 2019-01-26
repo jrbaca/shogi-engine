@@ -12,14 +12,14 @@ class Board {
     this.board = board;
   }
 
-  Board setPiece(int file, int rank, Piece piece) {
+  Board setPiece(Position position, Piece piece) {
     Piece[][] newBoard = getBoardCopy();
-    newBoard[file - 1][rank - 1] = piece;
+    newBoard[position.file - 1][position.rank - 1] = piece;
     return new Board(newBoard);
   }
 
-  Piece getPiece(int file, int rank) {
-    return board[file - 1][rank - 1];
+  Piece getPiece(Position position) {
+    return board[position.file - 1][position.rank - 1];
   }
 
   /**

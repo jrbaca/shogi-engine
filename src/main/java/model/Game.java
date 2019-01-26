@@ -23,23 +23,20 @@ class Game {
    * Moves a piece from a position to another position.
    *
    * @param player black or white
-   * @param fromFile the file to move from
-   * @param fromRank the rank to move from
-   * @param toFile the file to move to
-   * @param toRank the rank to move to
+   * @param fromPos the position to move from
+   * @param toPos the position to move to
    * @param promotes whether or not the piece promotes
    */
-  void movePiece(Player player, int fromFile, int fromRank, int toFile, int toRank,
-      boolean promotes) {
+  void movePiece(Player player, Position fromPos, Position toPos, boolean promotes) {
     addNewGameState(getCurrentGameState()
-        .movePiece(player, fromFile, fromRank, toFile, toRank, promotes));
+        .movePiece(player, fromPos, toPos, promotes));
   }
 
   String getStringRepresentation() {
     return getCurrentGameState().toString();
   }
 
-  private GameState getCurrentGameState() {
+  GameState getCurrentGameState() {
     return gameHistoryReversed.get(0);
   }
 
