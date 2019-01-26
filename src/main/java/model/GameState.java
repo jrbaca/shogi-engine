@@ -53,7 +53,16 @@ class GameState {
     return new GameState(board, new Hand(), new Hand(), Player.sente);
   }
 
-  String getStringRepresentation() {
+  GameState movePiece(Player player, int fromFile, int fromRank, int toFile, int toRank,
+      boolean promotes) {
+    // TODO check ownership
+    Piece pieceToMove = board.getPiece(fromFile, fromRank);
+    return new GameState(board.setPiece(fromFile, fromRank, null)
+        .setPiece(toFile, toRank, pieceToMove), senteHand, goteHand, currentPlayer);
+  }
+
+  @Override
+  public String toString() {
     return board.toString();
   }
 

@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import model.GameState.Player;
 
 /**
  * Internal representation of a Shogi game. Tracks game history.
@@ -18,7 +19,31 @@ class Game {
     gameHistoryReversed.add(GameState.setupNewGame());
   }
 
+  private GameState getCurrentGameState() {
+    return gameHistoryReversed.get(0);
+  }
+
+  private void addNewGameState(GameState gameState) {
+    gameHistoryReversed.add(0, gameState);
+  }
+
   String getStringRepresentation() {
-    return gameHistoryReversed.get(0).getStringRepresentation();
+    return getCurrentGameState().toString();
+  }
+
+  /**
+   * Moves a piece from a position to another position.
+   *
+   * @param player black or white
+   * @param fromFile the file to move from
+   * @param fromRank the rank to move from
+   * @param toFile the file to move to
+   * @param toRank the rank to move to
+   * @param promotes whether or not the piece promotes
+   */
+  void movePiece(Player player, int fromFile, int fromRank, int toFile, int toRank,
+      boolean promotes) {
+    addNewGameState(getCurrentGameState()
+        .movePiece(player, fromFile, fromRank, toFile, toRank, promotes));
   }
 }

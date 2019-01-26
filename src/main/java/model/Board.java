@@ -18,6 +18,10 @@ class Board {
     return new Board(newBoard);
   }
 
+  Piece getPiece(int file, int rank) {
+    return board[file - 1][rank - 1];
+  }
+
   private Piece[][] getBoardCopy() {
     Piece[][] newBoard = new Piece[board.length][];
     for (int i = 0; i < board.length; i++) {
