@@ -48,6 +48,8 @@ dependencies {
     compile 'com.google.code.findbugs:annotations:3.0.1'
     compile 'com.google.errorprone:error_prone_annotations:2.3.2'
 
+    compile 'io.vavr:vavr:0.10.0' // Functional programming
+
     // Logging
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25' // Logger API
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3' // LogBack

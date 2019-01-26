@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import model.Model2ViewAdapter;
-import model.ShogiModel;
+import model.ShogiEngine;
 import view.ShogiGUI;
 import view.View2ModelAdapter;
 
@@ -23,7 +23,7 @@ public class ShogiController extends Application {
   /**
    * The internal game representation engine.
    */
-  private ShogiModel shogiModel;
+  private ShogiEngine shogiModel;
 
   /**
    * Launches the game.
@@ -62,10 +62,11 @@ public class ShogiController extends Application {
     });
 
     // Set up the model
-    shogiModel = new ShogiModel(new Model2ViewAdapter() {
+    shogiModel = new ShogiEngine(new Model2ViewAdapter() {
 
     });
 
+    shogiGUI.finishSetup();
     stage.show();
   }
 }

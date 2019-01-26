@@ -6,7 +6,7 @@ import javafx.scene.control.TextArea;
  * The Shogi engine. Contains the logic to process commands and manipulate game state. Dispatches
  * any processed commands to {@link Game}.
  */
-public class ShogiModel {
+public class ShogiEngine {
 
   /**
    * Internal game representation.
@@ -18,7 +18,7 @@ public class ShogiModel {
    */
   private Model2ViewAdapter model2ViewAdapter;
 
-  public ShogiModel(Model2ViewAdapter model2ViewAdapter) {
+  public ShogiEngine(Model2ViewAdapter model2ViewAdapter) {
     this.model2ViewAdapter = model2ViewAdapter;
   }
 
@@ -38,7 +38,6 @@ public class ShogiModel {
    * @param textArea the text area to write to.
    */
   public void updateBoard(TextArea textArea) {
-    textArea.appendText(game.getStringRepresentation());
+    textArea.setText(game.getStringRepresentation());
   }
-
 }
