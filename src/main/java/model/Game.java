@@ -20,6 +20,10 @@ class Game {
     gameHistoryReversed.add(GameState.setupNewGame());
   }
 
+  static Game fromGameState(GameState gameState) {
+    throw new RuntimeException("Not yet implemented");
+  }
+
   /**
    * Moves a piece from a position to another position.
    *
