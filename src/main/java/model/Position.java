@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * A position on a shogi board.
  */
-class Position {
+final class Position {
 
   final int file;
   final int rank;

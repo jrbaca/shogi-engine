@@ -13,7 +13,7 @@ class GameState {
 
   private final Hand goteHand;
 
-  private final Player currentPlayer;
+  final Player currentPlayer;
 
   /**
    * Don't use this for creating GameStates. Use {@link GameStateBuilder} instead.

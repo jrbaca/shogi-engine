@@ -166,7 +166,7 @@ class GameTest {
                         .contains(Position.of(i, j)))
                 .check((i, j) -> {
                   Game game = GameBuilder.fromGameState(initialGameState).build();
-                  game.movePiece(Player.sente,
+                  game.movePiece(game.getCurrentGameState().currentPlayer,
                       startPos.get(pieceToPos._1).get(),
                       Position.of(i, j),
                       false);
@@ -184,7 +184,7 @@ class GameTest {
             () -> allowedEndPos.get(pieceToPos._1).get().toJavaStream()
                 .forEach(pieceToAllowedPos -> {
                   Game game = GameBuilder.fromGameState(initialGameState).build();
-                  game.movePiece(Player.sente,
+                  game.movePiece(game.getCurrentGameState().currentPlayer,
                       startPos.get(pieceToPos._1).get(),
                       pieceToAllowedPos,
                       false);
@@ -194,10 +194,12 @@ class GameTest {
   }
 
   @TestFactory
-  Stream<DynamicTest> pieceMovementFromInitialPositions() {
+  Stream<DynamicTest> blackPieceMovementFromInitialPositions() {
 
     // Want to test from initial pos
-    GameState initialGameState = GameBuilder.fromStandardRules().build().getCurrentGameState();
+    GameState initialGameState = GameStateBuilder
+        .fromStandardInitialPositions()
+        .build();
 
     Map<String, Position> startingPosition =
         HashMap.of(
@@ -242,13 +244,13 @@ class GameTest {
             ));
 
     return getAllowedAndDissallowedMovementTests(
-            initialGameState,
-            startingPosition,
-            allowedMovesFromStartingPosition);
+        initialGameState,
+        startingPosition,
+        allowedMovesFromStartingPosition);
   }
 
   @TestFactory
-  Stream<DynamicTest> pieceMovementFromCenterOnOpenBoard() {
+  Stream<DynamicTest> blackPieceMovementFromCenterOnOpenBoard() {
 
     Map<String, Position> startingPosition =
         HashMap.of(
@@ -331,20 +333,98 @@ class GameTest {
             "Pawn", HashSet.of(
                 Position.of(5, 4)));
 
-    // TODO generate initial game state for each piece
-    throw new RuntimeException("test not complete");
-    // Want to test with piece on center of board
-    //    GameState initialGameState = new Game().getCurrentGameState();
+    return startingPosition.toJavaStream()
+        .flatMap((pieceToStartingPos) -> {
 
-    //    return getAllowedAndDissallowedMovementTests(
-    //            initialGameState,
-    //            startingPosition,
-    //            allowedMovesFromStartingPosition);
+          GameState initialGameState = GameStateBuilder.fromEmptyState()
+              .setPiece(pieceToStartingPos._2, getPieceFromString(pieceToStartingPos._1)).build();
+
+          return getAllowedAndDissallowedMovementTests(
+              initialGameState,
+              HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
+              allowedMovesFromStartingPosition);
+        });
   }
 
-  // TODO test white reversed movement
+  private Piece getPieceFromString(String pieceName) {
+    switch (pieceName) {
+      case "King":
+        return new King(false);
+      case "Rook":
+        return new Rook();
+      case "Bishop":
+        return new Bishop();
+      case "Gold":
+        return new Gold();
+      case "Silver":
+        return new Silver();
+      case "Knight":
+        return new Knight();
+      case "Lance":
+        return new Lance();
+      case "Pawn":
+        return new Pawn();
+      default:
+        throw new RuntimeException("not a piece");
+    }
+  }
 
-  // TODO test draw?
+  @TestFactory
+  Stream<DynamicTest> whitePieceMovementFromInitialPositions() {
+
+    // Want to test from initial pos with white going first
+    GameState initialGameState = GameStateBuilder
+        .fromStandardInitialPositions()
+        .setCurrentPlayer(Player.gote)
+        .build();
+
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "King", Position.of(5, 1),
+            "Rook", Position.of(2, 2),
+            "Bishop", Position.of(8, 2),
+            "Gold", Position.of(4, 1),
+            "Silver", Position.of(3, 1),
+            "Knight", Position.of(2, 1),
+            "Lance", Position.of(1, 1),
+            "Pawn", Position.of(2, 3));
+
+    Map<String, Set<Position>> allowedMovesFromStartingPosition =
+        HashMap.of(
+            "King", HashSet.of(
+                Position.of(6, 2),
+                Position.of(5, 2),
+                Position.of(4, 2)),
+            "Rook", HashSet.of(
+                Position.of(1, 2),
+                Position.of(3, 2),
+                Position.of(4, 2),
+                Position.of(5, 2),
+                Position.of(6, 2),
+                Position.of(7, 2)),
+            "Bishop", HashSet.of(),
+            "Gold", HashSet.of(
+                Position.of(3, 2),
+                Position.of(4, 2),
+                Position.of(5, 2)),
+            "Silver", HashSet.of(
+                Position.of(2, 2),
+                Position.of(3, 2),
+                Position.of(4, 2)
+            ),
+            "Knight", HashSet.of(),
+            "Lance", HashSet.of(
+                Position.of(1, 2)
+            ),
+            "Pawn", HashSet.of(
+                Position.of(2, 4)
+            ));
+
+    return getAllowedAndDissallowedMovementTests(
+        initialGameState,
+        startingPosition,
+        allowedMovesFromStartingPosition);
+  }
 
   // TODO test check
 
@@ -361,4 +441,6 @@ class GameTest {
   // TODO test king movement regarding check
 
   // TODO test game states are completely independent and past states are properly preserved
+
+  // TODO test draw?
 }
