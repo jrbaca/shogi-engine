@@ -1,16 +1,21 @@
 package model;
 
+import io.vavr.collection.Set;
+
 class King extends Piece {
 
-  private boolean trueKing;
+  King(Player ownedBy) {
+    super(ownedBy);
+  }
 
-  King(boolean trueKing) {
-    this.trueKing = trueKing;
+  @Override
+  Set<Position> validPlacesToMove(Position from, Position to) {
+    return null;
   }
 
   @Override
   public String toString() {
-    if (trueKing) {
+    if (ownedBy.equals(Player.gote)) {
       return "王";
     } else {
       return "玉";

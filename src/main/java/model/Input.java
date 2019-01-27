@@ -1,7 +1,6 @@
 package model;
 
 import io.vavr.control.Option;
-import model.GameState.Player;
 
 /**
  * Main input processing class for the {@link ShogiEngine}.

@@ -3,7 +3,6 @@ package model;
 import io.vavr.control.Option;
 import java.util.ArrayList;
 import java.util.List;
-import model.GameState.Player;
 
 /**
  * Internal representation of a Shogi game. Tracks game history.

@@ -25,11 +25,16 @@ class GameState {
     this.currentPlayer = currentPlayer;
   }
 
+  /**
+   * Tries to have the specified player move a piece from one position to another, possibly
+   * promoting. Returns Option.none if could not perform the action, and Option.some(GameState) if
+   * the action succeeded, and contains the next GameState.
+   */
   Option<GameState> movePiece(Player player, Position fromPos, Position toPos,
       boolean promotes) {
 
-    // Exit if wrong player tries to move
-    if (player != currentPlayer) {
+    // Exit if player tries to move out of turn or doesn't own that piece
+    if (player != currentPlayer || player != board.getPiece(fromPos).ownedBy) {
       return Option.none();
     }
 
@@ -41,7 +46,6 @@ class GameState {
       nextPlayer = Player.sente;
     }
 
-    // TODO check ownership
     Piece pieceToMove = board.getPiece(fromPos);
     return Option.of(new GameState(board.setPiece(fromPos, null)
         .setPiece(toPos, pieceToMove), senteHand, goteHand, nextPlayer));
@@ -50,9 +54,5 @@ class GameState {
   @Override
   public String toString() {
     return board.toString();
-  }
-
-  enum Player {
-    sente, gote
   }
 }

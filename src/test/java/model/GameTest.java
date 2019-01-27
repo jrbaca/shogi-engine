@@ -11,7 +11,6 @@ import io.vavr.collection.HashSet;
 import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import java.util.stream.Stream;
-import model.GameState.Player;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -337,7 +336,8 @@ class GameTest {
         .flatMap((pieceToStartingPos) -> {
 
           GameState initialGameState = GameStateBuilder.fromEmptyState()
-              .setPiece(pieceToStartingPos._2, getPieceFromString(pieceToStartingPos._1)).build();
+              .setPiece(pieceToStartingPos._2,
+                  getPieceFromString(pieceToStartingPos._1, Player.sente)).build();
 
           return getAllowedAndDissallowedMovementTests(
               initialGameState,
@@ -346,24 +346,24 @@ class GameTest {
         });
   }
 
-  private Piece getPieceFromString(String pieceName) {
+  private Piece getPieceFromString(String pieceName, Player owner) {
     switch (pieceName) {
       case "King":
-        return new King(false);
+        return new King(owner);
       case "Rook":
-        return new Rook();
+        return new Rook(owner);
       case "Bishop":
-        return new Bishop();
+        return new Bishop(owner);
       case "Gold":
-        return new Gold();
+        return new Gold(owner);
       case "Silver":
-        return new Silver();
+        return new Silver(owner);
       case "Knight":
-        return new Knight();
+        return new Knight(owner);
       case "Lance":
-        return new Lance();
+        return new Lance(owner);
       case "Pawn":
-        return new Pawn();
+        return new Pawn(owner);
       default:
         throw new RuntimeException("not a piece");
     }
@@ -425,6 +425,12 @@ class GameTest {
         startingPosition,
         allowedMovesFromStartingPosition);
   }
+
+  // TODO test can move to enemy positions
+
+  // TODO test cant move to friendly positions
+
+  // TODO test cant move off board
 
   // TODO test check
 
