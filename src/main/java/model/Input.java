@@ -71,8 +71,13 @@ class Input {
 
   String run(Game game) {
     if (verb.equals("moves")) {
+      GameState previousGameState = game.getCurrentGameState();
       game.movePiece(player, posFrom, posTo, promotes);
-      return "moved piece"; // TODO update
+      if (previousGameState != game.getCurrentGameState()) {
+        return "Moved piece";
+      } else {
+        return "Couldn't move piece";
+      }
     } else if (verb.equals("drops")) {
       // TODO this
       return "Gonna drop";

@@ -1,0 +1,8 @@
+@font-face {
+  src: url('Mplus1p-Regular.ttf');
+}
+
+#txtBoard {
+  -fx-font-family: "Mplus 1p";
+  -fx-font-size: 18;
+}

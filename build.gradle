@@ -6,6 +6,8 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.5'
 }
 
+compileJava.options.encoding = 'UTF-8'
+
 group 'com.josephbaca'
 version '1.0'
 

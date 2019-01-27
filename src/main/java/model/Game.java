@@ -1,5 +1,6 @@
 package model;
 
+import io.vavr.control.Option;
 import java.util.ArrayList;
 import java.util.List;
 import model.GameState.Player;
@@ -28,8 +29,12 @@ class Game {
    * @param promotes whether or not the piece promotes
    */
   void movePiece(Player player, Position fromPos, Position toPos, boolean promotes) {
-    addNewGameState(getCurrentGameState()
-        .movePiece(player, fromPos, toPos, promotes));
+    Option<GameState> newGameState =
+        getCurrentGameState().movePiece(player, fromPos, toPos, promotes);
+
+    if (newGameState.isDefined()) {
+      addNewGameState(newGameState.get());
+    }
   }
 
   String getStringRepresentation() {

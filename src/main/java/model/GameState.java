@@ -1,5 +1,7 @@
 package model;
 
+import io.vavr.control.Option;
+
 /**
  * Immutable class representing the current game state.
  */
@@ -56,12 +58,26 @@ class GameState {
     return new GameState(board, new Hand(), new Hand(), Player.sente);
   }
 
-  GameState movePiece(Player player, Position fromPos, Position toPos,
+  Option<GameState> movePiece(Player player, Position fromPos, Position toPos,
       boolean promotes) {
+
+    // Exit if wrong player tries to move
+    if (player != currentPlayer) {
+      return Option.none();
+    }
+
+    // Set next player
+    Player nextPlayer;
+    if (currentPlayer == Player.sente) {
+      nextPlayer = Player.gote;
+    } else {
+      nextPlayer = Player.sente;
+    }
+
     // TODO check ownership
     Piece pieceToMove = board.getPiece(fromPos);
-    return new GameState(board.setPiece(fromPos, null)
-        .setPiece(toPos, pieceToMove), senteHand, goteHand, currentPlayer);
+    return Option.of(new GameState(board.setPiece(fromPos, null)
+        .setPiece(toPos, pieceToMove), senteHand, goteHand, nextPlayer));
   }
 
   @Override
