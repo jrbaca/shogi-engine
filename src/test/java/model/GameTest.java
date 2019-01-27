@@ -20,7 +20,7 @@ class GameTest {
 
   @Test
   void gameStringRepresentation() {
-    Game game = new Game();
+    Game game = GameBuilder.fromStandardRules().build();
     String gameStringRepresentation = game.getStringRepresentation();
     System.out.println(gameStringRepresentation);
     assertEquals(
@@ -39,7 +39,7 @@ class GameTest {
 
   @Test
   void cannotMoveOffTurn() {
-    Game game = new Game();
+    Game game = GameBuilder.fromStandardRules().build();
 
     // Get initial
     GameState gs1 = game.getCurrentGameState();
@@ -80,7 +80,7 @@ class GameTest {
 
   @Test
   void playersCanOnlyMoveOwnPieces() {
-    Game game = new Game();
+    Game game = GameBuilder.fromStandardRules().build();
 
     // Get initial
     GameState gs1 = game.getCurrentGameState();
@@ -109,7 +109,7 @@ class GameTest {
 
   @Test
   void pawnMovement() {
-    Game game = new Game();
+    Game game = GameBuilder.fromStandardRules().build();
 
     // Get initial
     final GameState gs1 = game.getCurrentGameState();
@@ -165,7 +165,7 @@ class GameTest {
                     !allowedEndPos.get(pieceToPos._1).get()
                         .contains(Position.of(i, j)))
                 .check((i, j) -> {
-                  Game game = Game.fromGameState(initialGameState);
+                  Game game = GameBuilder.fromGameState(initialGameState).build();
                   game.movePiece(Player.sente,
                       startPos.get(pieceToPos._1).get(),
                       Position.of(i, j),
@@ -183,7 +183,7 @@ class GameTest {
         .map(pieceToPos -> dynamicTest("Allowed movement: " + pieceToPos._1,
             () -> allowedEndPos.get(pieceToPos._1).get().toJavaStream()
                 .forEach(pieceToAllowedPos -> {
-                  Game game = Game.fromGameState(initialGameState);
+                  Game game = GameBuilder.fromGameState(initialGameState).build();
                   game.movePiece(Player.sente,
                       startPos.get(pieceToPos._1).get(),
                       pieceToAllowedPos,
@@ -196,7 +196,8 @@ class GameTest {
   @TestFactory
   Stream<DynamicTest> pieceMovementFromInitialPositions() {
 
-    GameState initialGameState = new Game().getCurrentGameState(); // Want to test from initial pos
+    // Want to test from initial pos
+    GameState initialGameState = GameBuilder.fromStandardRules().build().getCurrentGameState();
 
     Map<String, Position> startingPosition =
         HashMap.of(
@@ -260,37 +261,75 @@ class GameTest {
             "Lance", Position.of(5, 5),
             "Pawn", Position.of(5, 5));
 
-    // TODO set the correct allowed positions
     Map<String, Set<Position>> allowedMovesFromStartingPosition =
         HashMap.of(
             "King", HashSet.of(
                 Position.of(6, 5),
-                Position.of(5, 8),
-                Position.of(4, 8)),
+                Position.of(5, 5),
+                Position.of(4, 5),
+                Position.of(6, 4),
+                Position.of(5, 4),
+                Position.of(4, 4),
+                Position.of(6, 6),
+                Position.of(5, 6),
+                Position.of(4, 6)),
             "Rook", HashSet.of(
-                Position.of(1, 8),
-                Position.of(3, 8),
-                Position.of(4, 8),
+                Position.of(1, 5),
+                Position.of(2, 5),
+                Position.of(3, 5),
+                Position.of(4, 5),
+                Position.of(6, 5),
+                Position.of(7, 5),
+                Position.of(8, 5),
+                Position.of(9, 5),
+                Position.of(5, 1),
+                Position.of(5, 2),
+                Position.of(5, 3),
+                Position.of(5, 4),
+                Position.of(5, 6),
+                Position.of(5, 7),
                 Position.of(5, 8),
-                Position.of(6, 8),
-                Position.of(7, 8)),
-            "Bishop", HashSet.of(),
-            "Gold", HashSet.of(
-                Position.of(3, 8),
-                Position.of(4, 8),
-                Position.of(5, 8)),
-            "Silver", HashSet.of(
+                Position.of(5, 9)),
+            "Bishop", HashSet.of(
+                Position.of(1, 1),
+                Position.of(2, 2),
+                Position.of(3, 3),
+                Position.of(4, 4),
+                Position.of(6, 6),
+                Position.of(7, 7),
+                Position.of(8, 8),
+                Position.of(9, 9),
+                Position.of(9, 1),
+                Position.of(8, 2),
+                Position.of(7, 3),
+                Position.of(6, 4),
+                Position.of(4, 6),
+                Position.of(3, 7),
                 Position.of(2, 8),
-                Position.of(3, 8),
-                Position.of(4, 8)
-            ),
-            "Knight", HashSet.of(),
+                Position.of(1, 9)),
+            "Gold", HashSet.of(
+                Position.of(6, 4),
+                Position.of(5, 4),
+                Position.of(4, 4),
+                Position.of(6, 5),
+                Position.of(4, 5),
+                Position.of(5, 6)),
+            "Silver", HashSet.of(
+                Position.of(6, 4),
+                Position.of(5, 4),
+                Position.of(4, 4),
+                Position.of(4, 6),
+                Position.of(6, 6)),
+            "Knight", HashSet.of(
+                Position.of(4, 3),
+                Position.of(6, 3)),
             "Lance", HashSet.of(
-                Position.of(1, 8)
-            ),
+                Position.of(5, 1),
+                Position.of(5, 2),
+                Position.of(5, 3),
+                Position.of(5, 4)),
             "Pawn", HashSet.of(
-                Position.of(2, 6)
-            ));
+                Position.of(5, 4)));
 
     // TODO generate initial game state for each piece
     throw new RuntimeException("test not complete");
@@ -302,4 +341,24 @@ class GameTest {
     //            startingPosition,
     //            allowedMovesFromStartingPosition);
   }
+
+  // TODO test white reversed movement
+
+  // TODO test draw?
+
+  // TODO test check
+
+  // TODO test checkmate
+
+  // TODO test piece capture board to hand transfer
+
+  // TODO test piece drop hand to board transfer
+
+  // TODO test movement in place doesn't work / doesn't change turns
+
+  // TODO test promotion
+
+  // TODO test king movement regarding check
+
+  // TODO test game states are completely independent and past states are properly preserved
 }

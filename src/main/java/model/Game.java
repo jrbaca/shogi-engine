@@ -15,13 +15,11 @@ class Game {
    */
   private List<GameState> gameHistoryReversed;
 
+  /**
+   * Don't use this for creating games. Use {@link GameBuilder} instead.
+   */
   Game() {
     gameHistoryReversed = new ArrayList<>();
-    gameHistoryReversed.add(GameState.setupNewGame());
-  }
-
-  static Game fromGameState(GameState gameState) {
-    throw new RuntimeException("Not yet implemented");
   }
 
   /**
@@ -49,7 +47,7 @@ class Game {
     return gameHistoryReversed.get(0);
   }
 
-  private void addNewGameState(GameState gameState) {
+  void addNewGameState(GameState gameState) {
     gameHistoryReversed.add(0, gameState);
   }
 }
