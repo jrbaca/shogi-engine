@@ -12,7 +12,7 @@ class Game {
   /**
    * A list of all past game states, including present, stored in reverse order.
    */
-  private List<GameState> gameHistoryReversed;
+  private final List<GameState> gameHistoryReversed;
 
   /**
    * Don't use this for creating games. Use {@link GameBuilder} instead.

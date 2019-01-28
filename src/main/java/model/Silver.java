@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Silver extends Piece {
 
-  private static Movement movement = CompositeMovement.from(
+  private static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new StepMovement(0, -1),
           new StepMovement(1, -1),

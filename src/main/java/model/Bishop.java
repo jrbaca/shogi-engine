@@ -2,9 +2,9 @@ package model;
 
 import io.vavr.collection.HashSet;
 
-public class Bishop extends Piece {
+class Bishop extends Piece {
 
-  private static Movement movement = CompositeMovement.from(
+  private static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new RangeMovement(-1, -1),
           new RangeMovement(1, 1),

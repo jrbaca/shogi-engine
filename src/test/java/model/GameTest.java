@@ -134,7 +134,7 @@ class GameTest {
     assertNotEquals(gs1, game.getCurrentGameState());
   }
 
-  private Stream<DynamicTest> getAllowedAndDissallowedMovementTests(
+  private Stream<DynamicTest> getAllowedAndDisallowedMovementTests(
       GameState initialGameState,
       Map<String, Position> startPos,
       Map<String, Set<Position>> allowedEndPos) {
@@ -241,7 +241,7 @@ class GameTest {
                 Position.of(2, 6)
             ));
 
-    return getAllowedAndDissallowedMovementTests(
+    return getAllowedAndDisallowedMovementTests(
         initialGameState,
         startingPosition,
         allowedMovesFromStartingPosition);
@@ -337,7 +337,7 @@ class GameTest {
               .setPiece(pieceToStartingPos._2,
                   getPieceFromString(pieceToStartingPos._1, Player.sente)).build();
 
-          return getAllowedAndDissallowedMovementTests(
+          return getAllowedAndDisallowedMovementTests(
               initialGameState,
               HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
               allowedMovesFromStartingPosition);
@@ -417,7 +417,7 @@ class GameTest {
                 Position.of(2, 4)
             ));
 
-    return getAllowedAndDissallowedMovementTests(
+    return getAllowedAndDisallowedMovementTests(
         initialGameState,
         startingPosition,
         allowedMovesFromStartingPosition);

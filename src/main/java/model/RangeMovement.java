@@ -18,7 +18,6 @@ class RangeMovement extends MovementUtil implements Movement {
   }
 
   Set<Position> getValidMovementPositionsBasedOnConcreteImpl(Player player, Board board,
-      Position fromPos,
       Position toPos) {
 
     Option<Piece> pieceAtToPos = board.getPiece(toPos);

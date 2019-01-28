@@ -17,7 +17,7 @@ abstract class MovementUtil {
   }
 
   /**
-   * Gets the {@link Position}s that a piece is capable of moving to.
+   * Gets the {@link Position Positions} that a piece is capable of moving to.
    */
   @SuppressWarnings("WeakerAccess")
   public Set<Position> getValidMovementPositions(Player player, Board board, Position fromPos) {
@@ -28,7 +28,7 @@ abstract class MovementUtil {
       return HashSet.of();
     }
 
-    return getValidMovementPositionsBasedOnConcreteImpl(player, board, fromPos, positionToMoveTo);
+    return getValidMovementPositionsBasedOnConcreteImpl(player, board, positionToMoveTo);
   }
 
   private Position transformMovementBasedOnPlayer(Player player, Position fromPos) {
@@ -47,7 +47,6 @@ abstract class MovementUtil {
   }
 
   abstract Set<Position> getValidMovementPositionsBasedOnConcreteImpl(Player player, Board board,
-      Position fromPos,
       Position toPos);
 
 }

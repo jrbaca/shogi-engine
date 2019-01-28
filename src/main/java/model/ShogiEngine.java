@@ -11,12 +11,12 @@ public class ShogiEngine {
   /**
    * Internal game representation.
    */
-  private Game game = GameBuilder.fromStandardRules().build();
+  private final Game game = GameBuilder.fromStandardRules().build();
 
   /**
    * Adapter for connecting to the view.
    */
-  private Model2ViewAdapter model2ViewAdapter;
+  private final Model2ViewAdapter model2ViewAdapter;
 
   public ShogiEngine(Model2ViewAdapter model2ViewAdapter) {
     this.model2ViewAdapter = model2ViewAdapter;

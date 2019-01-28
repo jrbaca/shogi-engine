@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Rook extends Piece {
 
-  private static Movement movement = CompositeMovement.from(
+  private static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new RangeMovement(0, -1),
           new RangeMovement(0, 1),

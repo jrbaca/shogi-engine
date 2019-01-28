@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Knight extends Piece {
 
-  private static Movement movement = CompositeMovement.from(
+  private static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new StepMovement(1, -2),
           new StepMovement(-1, -2)
