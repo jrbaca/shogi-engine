@@ -1,5 +1,6 @@
 package model;
 
+import io.vavr.collection.HashSet;
 import io.vavr.collection.Set;
 
 public class Bishop extends Piece {
@@ -9,8 +10,8 @@ public class Bishop extends Piece {
   }
 
   @Override
-  Set<Position> validPlacesToMove(Position from, Position to) {
-    return null;
+  Set<Position> validPlacesToMove(Player player, Board board, Position from) {
+    return HashSet.of();
   }
 
   @Override

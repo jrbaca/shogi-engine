@@ -44,19 +44,19 @@ class GameTest {
     GameState gs1 = game.getCurrentGameState();
 
     // Attempt to move off turn for white
-    game.movePiece(Player.gote, Position.of(1, 1), Position.of(1, 2), false);
+    game.movePiece(Player.gote, Position.of(1, 3), Position.of(1, 4), false);
 
     // Should be the same
     assertEquals(gs1, game.getCurrentGameState());
 
     // Try again
-    game.movePiece(Player.gote, Position.of(1, 1), Position.of(1, 2), false);
+    game.movePiece(Player.gote, Position.of(1, 3), Position.of(1, 4), false);
 
     // Should still be the same
     assertEquals(gs1, game.getCurrentGameState());
 
     // Now lets move correctly with black
-    game.movePiece(Player.sente, Position.of(1, 9), Position.of(1, 8), false);
+    game.movePiece(Player.sente, Position.of(1, 7), Position.of(1, 6), false);
 
     // Save new game state
     GameState gs2 = game.getCurrentGameState();
@@ -65,13 +65,13 @@ class GameTest {
     assertNotEquals(gs1, gs2);
 
     // Now have black try to move again
-    game.movePiece(Player.sente, Position.of(1, 7), Position.of(1, 6), false);
+    game.movePiece(Player.sente, Position.of(1, 6), Position.of(1, 5), false);
 
     // This shouldn't work
     assertEquals(gs2, game.getCurrentGameState());
 
     // Now have black try to move once more
-    game.movePiece(Player.sente, Position.of(1, 7), Position.of(1, 6), false);
+    game.movePiece(Player.sente, Position.of(1, 6), Position.of(1, 5), false);
 
     // This still shouldn't work
     assertEquals(gs2, game.getCurrentGameState());
@@ -85,13 +85,13 @@ class GameTest {
     GameState gs1 = game.getCurrentGameState();
 
     // Black tries to move white
-    game.movePiece(Player.sente, Position.of(1, 1), Position.of(1, 2), false);
+    game.movePiece(Player.sente, Position.of(1, 3), Position.of(1, 4), false);
 
     // Shouldn't work
     assertEquals(gs1, game.getCurrentGameState());
 
     // Lets go to whites turn
-    game.movePiece(Player.sente, Position.of(1, 9), Position.of(1, 8), false);
+    game.movePiece(Player.sente, Position.of(1, 7), Position.of(1, 6), false);
 
     // Get initial
     GameState gs2 = game.getCurrentGameState();
@@ -100,7 +100,7 @@ class GameTest {
     assertNotEquals(gs1, gs2);
 
     // White tries to move black
-    game.movePiece(Player.gote, Position.of(1, 7), Position.of(1, 6), false);
+    game.movePiece(Player.gote, Position.of(1, 6), Position.of(1, 5), false);
 
     // Shouldn't work
     assertEquals(gs2, game.getCurrentGameState());
@@ -432,6 +432,8 @@ class GameTest {
 
   // TODO test cant move off board
 
+  // TODO test promotion
+
   // TODO test check
 
   // TODO test checkmate
@@ -441,8 +443,6 @@ class GameTest {
   // TODO test piece drop hand to board transfer
 
   // TODO test movement in place doesn't work / doesn't change turns
-
-  // TODO test promotion
 
   // TODO test king movement regarding check
 

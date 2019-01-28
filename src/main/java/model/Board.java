@@ -1,5 +1,7 @@
 package model;
 
+import io.vavr.control.Option;
+
 class Board {
 
   private final Piece[][] board;
@@ -18,8 +20,13 @@ class Board {
     return new Board(newBoard);
   }
 
-  Piece getPiece(Position position) {
-    return board[position.file - 1][position.rank - 1];
+  Option<Piece> getPiece(Position position) {
+    Piece selectedPiece = board[position.file - 1][position.rank - 1];
+    if (selectedPiece != null) {
+      return Option.of(selectedPiece);
+    } else {
+      return Option.none();
+    }
   }
 
   /**

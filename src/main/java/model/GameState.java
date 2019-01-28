@@ -33,8 +33,22 @@ class GameState {
   Option<GameState> movePiece(Player player, Position fromPos, Position toPos,
       boolean promotes) {
 
+    // Ensure piece exists
+    Option<Piece> optPieceToMove = board.getPiece(fromPos);
+    Piece pieceToMove;
+    if (optPieceToMove.isEmpty()) {
+      return Option.none();
+    } else {
+      pieceToMove = optPieceToMove.get();
+    }
+
     // Exit if player tries to move out of turn or doesn't own that piece
-    if (player != currentPlayer || player != board.getPiece(fromPos).ownedBy) {
+    if (player != currentPlayer || player != pieceToMove.ownedBy) {
+      return Option.none();
+    }
+
+    // Exit if invalid move
+    if (!pieceToMove.validPlacesToMove(player, board, fromPos).contains(toPos)) {
       return Option.none();
     }
 
@@ -46,9 +60,13 @@ class GameState {
       nextPlayer = Player.sente;
     }
 
-    Piece pieceToMove = board.getPiece(fromPos);
-    return Option.of(new GameState(board.setPiece(fromPos, null)
-        .setPiece(toPos, pieceToMove), senteHand, goteHand, nextPlayer));
+    // TODO transfer piece to hand if capture
+
+    Board newBoard = board
+        .setPiece(fromPos, null)
+        .setPiece(toPos, pieceToMove); // TODO this might cause some issues with board history
+
+    return Option.of(new GameState(newBoard, senteHand, goteHand, nextPlayer));
   }
 
   @Override

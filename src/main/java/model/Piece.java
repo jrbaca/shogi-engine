@@ -10,5 +10,5 @@ abstract class Piece {
     this.ownedBy = ownedBy;
   }
 
-  abstract Set<Position> validPlacesToMove(Position from, Position to);
+  abstract Set<Position> validPlacesToMove(Player player, Board board, Position from);
 }
