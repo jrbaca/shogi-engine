@@ -11,7 +11,7 @@ abstract class Piece {
   }
 
   Set<Position> validPlacesToMove(Player player, Board board, Position from) {
-    return getPieceMovement().getValidPlacesToMove(player, board, from);
+    return getPieceMovement().getValidMovementPositions(player, board, from);
   }
 
   abstract Movement getPieceMovement();

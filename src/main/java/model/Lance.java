@@ -6,7 +6,7 @@ class Lance extends Piece {
 
   private static Movement movement = CompositeMovement.from(
       HashSet.of(
-          new RangeMovement(-1, 0)
+          new RangeMovement(0, -1)
       ));
 
   Lance(Player ownedBy) {

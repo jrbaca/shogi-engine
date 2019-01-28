@@ -6,13 +6,13 @@ class King extends Piece {
 
   private static Movement movement = CompositeMovement.from(
       HashSet.of(
-          new StepMovement(-1, 0),
-          new StepMovement(1, 0),
           new StepMovement(0, -1),
           new StepMovement(0, 1),
+          new StepMovement(-1, 0),
+          new StepMovement(1, 0),
           new StepMovement(-1, -1),
-          new StepMovement(-1, 1),
           new StepMovement(1, -1),
+          new StepMovement(-1, 1),
           new StepMovement(1, 1)
       ));
 

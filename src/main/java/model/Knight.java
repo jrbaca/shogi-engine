@@ -6,8 +6,8 @@ class Knight extends Piece {
 
   private static Movement movement = CompositeMovement.from(
       HashSet.of(
-          new StepMovement(-2, 1),
-          new StepMovement(-2, -1)
+          new StepMovement(1, -2),
+          new StepMovement(-1, -2)
       ));
 
   Knight(Player ownedBy) {

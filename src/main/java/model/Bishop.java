@@ -8,8 +8,8 @@ public class Bishop extends Piece {
       HashSet.of(
           new RangeMovement(-1, -1),
           new RangeMovement(1, 1),
-          new RangeMovement(-1, 1),
-          new RangeMovement(1, -1)
+          new RangeMovement(1, -1),
+          new RangeMovement(-1, 1)
       ));
 
   Bishop(Player ownedBy) {
