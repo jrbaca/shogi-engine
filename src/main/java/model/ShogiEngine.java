@@ -11,7 +11,11 @@ public class ShogiEngine {
   /**
    * Internal game representation.
    */
-  private final Game game = GameBuilder.fromStandardRules().build();
+  private final Game game =
+      GameBuilder
+          .fromStandardRules()
+          .fromStandardInitialPositions()
+          .build();
 
   /**
    * Adapter for connecting to the view.

@@ -18,6 +18,7 @@ class StepMovement extends MovementUtil implements Movement {
     super(fileStep, rankStep);
   }
 
+  @Override
   Set<Position> getValidMovementPositionsBasedOnConcreteImpl(Player player, Board board,
       Position toPos) {
 

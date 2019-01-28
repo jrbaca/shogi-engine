@@ -17,6 +17,7 @@ class RangeMovement extends MovementUtil implements Movement {
     super(fileDirection, rankDirection);
   }
 
+  @Override
   Set<Position> getValidMovementPositionsBasedOnConcreteImpl(Player player, Board board,
       Position toPos) {
 
