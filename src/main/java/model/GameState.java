@@ -16,7 +16,7 @@ class GameState {
   final Player currentPlayer;
 
   /**
-   * Don't use this for creating GameStates. Use {@link GameStateBuilder} instead.
+   * Creates GameStates manually. It might be worth it to use {@link GameStateBuilder} instead.
    */
   GameState(Board board, Hand senteHand, Hand goteHand, Player currentPlayer) {
     this.board = board;
@@ -32,41 +32,59 @@ class GameState {
    */
   Option<GameState> movePiece(Player player, Position fromPos, Position toPos,
       boolean promotes) {
-
-    // Ensure piece exists
-    Option<Piece> optPieceToMove = board.getPiece(fromPos);
-    Piece pieceToMove;
-    if (optPieceToMove.isEmpty()) {
-      return Option.none();
-    } else {
-      pieceToMove = optPieceToMove.get();
-    }
-
-    // Exit if player tries to move out of turn or doesn't own that piece
-    if (player != currentPlayer || player != pieceToMove.ownedBy) {
+    if (!moveIsValid(player, fromPos, toPos, promotes)) {
       return Option.none();
     }
+    return Option.some(movePieceAndGetNewGameState(fromPos, toPos));
+  }
 
-    // Exit if invalid move
-    if (!pieceToMove.validPlacesToMove(player, board, fromPos).contains(toPos)) {
-      return Option.none();
-    }
+  private boolean moveIsValid(Player player, Position fromPos, Position toPos,
+      boolean promotes) {
+    return pieceExists(fromPos)
+        && isCurrentTurn(player)
+        && ownsPiece(player, fromPos)
+        && pieceHasAbilityToMoveToPosition(fromPos, toPos);
+  }
 
-    // Set next player
-    Player nextPlayer;
+  private GameState movePieceAndGetNewGameState(Position fromPos, Position toPos) {
+    Player nextPlayer = getNextPlayer();
+    Board newBoard = getBoardAfterMovingPiece(fromPos, toPos);
+    return new GameState(newBoard, senteHand, goteHand, nextPlayer);
+  }
+
+  private boolean pieceExists(Position fromPos) {
+    return board.getPiece(fromPos).isDefined();
+  }
+
+  private boolean isCurrentTurn(Player player) {
+    return player.equals(currentPlayer);
+  }
+
+  private boolean ownsPiece(Player player, Position fromPos) {
+    return board.getPiece(fromPos).get().ownedBy.equals(player);
+  }
+
+  private boolean pieceHasAbilityToMoveToPosition(Position fromPos, Position toPos) {
+    return board.getPiece(fromPos).get()
+        .validPlacesToMove(currentPlayer, board, fromPos)
+        .contains(toPos);
+  }
+
+  private Player getNextPlayer() {
     if (currentPlayer == Player.sente) {
-      nextPlayer = Player.gote;
+      return Player.gote;
     } else {
-      nextPlayer = Player.sente;
+      return Player.sente;
     }
+  }
 
+  private Board getBoardAfterMovingPiece(Position fromPos, Position toPos) {
+    Piece pieceToMove = board.getPiece(fromPos).get();
     // TODO transfer piece to hand if capture
-
-    Board newBoard = board
+    // TODO this might cause some issues with board history
+    return board
         .setPiece(fromPos, null)
-        .setPiece(toPos, pieceToMove); // TODO this might cause some issues with board history
-
-    return Option.of(new GameState(newBoard, senteHand, goteHand, nextPlayer));
+        .setPiece(toPos, pieceToMove);
   }
 
   @Override
