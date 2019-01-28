@@ -1,8 +1,8 @@
 package model;
 
-
 /**
- * Builder class for creating custom {@link GameState}.
+ * Builder class for creating custom {@link GameState GameStates}. Can be used to specify
+ * initial conditions for a {@link GameBuilder}.
  */
 class GameStateBuilder {
 
@@ -27,7 +27,7 @@ class GameStateBuilder {
     return gameStateBuilder;
   }
 
-  static GameStateBuilder fromStandardInitialPositions() {
+  static GameStateBuilder fromStandardInitialState() {
     GameStateBuilder gameStateBuilder = GameStateBuilder.fromEmptyState();
     gameStateBuilder
         .setPiece(Position.of(1, 1), new Lance(Player.gote))

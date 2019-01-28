@@ -1,7 +1,11 @@
 package model;
 
 /**
- * Builder class for setting initial conditions and rules for a new {@link Game}.
+ * Builder class for setting initial conditions and rules for a new {@link Game}. You may
+ * use {@link #fromStandardInitialPositions()} to create a game with the normal starting
+ * positions or {@link #fromGameState(GameState gameState)} to create one with custom
+ * initial positions. {@link GameStateBuilder} can be especially useful for creating custom
+ * initial conditions.
  */
 class GameBuilder {
 
@@ -11,24 +15,27 @@ class GameBuilder {
   }
 
   /**
-   * Returns a {@link GameBuilder} from a known {@link GameState}.
+   * Returns a {@link GameBuilder} using standard rules.
    */
-  static GameBuilder fromGameState(GameState gameState) {
-    GameBuilder gameBuilder = new GameBuilder();
-    gameBuilder.gameState = gameState;
-    return gameBuilder;
+  static GameBuilder fromStandardRules() {
+    return new GameBuilder();
   }
 
   /**
-   * Returns a {@link GameBuilder} using standard rules and starting positions.
+   * Returns a {@link GameBuilder} with initial conditions the same as the specified
+   * {@link GameState}.
    */
-  static GameBuilder fromStandardRules() {
-    GameBuilder gameBuilder = new GameBuilder();
+  GameBuilder fromGameState(GameState gameState) {
+    this.gameState = gameState;
+    return this;
+  }
 
-    gameBuilder.gameState =
-        GameStateBuilder.fromStandardInitialPositions().build();
-
-    return gameBuilder;
+  /**
+   * Returns a {@link GameBuilder} with pieces placed in the standard starting positions.
+   */
+  GameBuilder fromStandardInitialPositions() {
+    this.gameState = GameStateBuilder.fromStandardInitialState().build();
+    return this;
   }
 
   /**

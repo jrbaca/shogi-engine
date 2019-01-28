@@ -19,7 +19,11 @@ class GameTest {
 
   @Test
   void gameStringRepresentation() {
-    Game game = GameBuilder.fromStandardRules().build();
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromStandardInitialPositions()
+        .build();
+
     String gameStringRepresentation = game.getStringRepresentation();
     System.out.println(gameStringRepresentation);
     assertEquals(
@@ -38,7 +42,10 @@ class GameTest {
 
   @Test
   void cannotMoveOffTurn() {
-    Game game = GameBuilder.fromStandardRules().build();
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromStandardInitialPositions()
+        .build();
 
     // Get initial
     GameState gs1 = game.getCurrentGameState();
@@ -79,7 +86,10 @@ class GameTest {
 
   @Test
   void playersCanOnlyMoveOwnPieces() {
-    Game game = GameBuilder.fromStandardRules().build();
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromStandardInitialPositions()
+        .build();
 
     // Get initial
     GameState gs1 = game.getCurrentGameState();
@@ -108,7 +118,10 @@ class GameTest {
 
   @Test
   void pawnMovement() {
-    Game game = GameBuilder.fromStandardRules().build();
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromStandardInitialPositions()
+        .build();
 
     // Get initial
     final GameState gs1 = game.getCurrentGameState();
@@ -164,7 +177,9 @@ class GameTest {
                     !allowedEndPos.get(pieceToPos._1).get()
                         .contains(Position.of(i, j)))
                 .check((i, j) -> {
-                  Game game = GameBuilder.fromGameState(initialGameState).build();
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
                   game.movePiece(game.getCurrentGameState().currentPlayer,
                       startPos.get(pieceToPos._1).get(),
                       Position.of(i, j),
@@ -182,7 +197,9 @@ class GameTest {
         .map(pieceToPos -> dynamicTest("Allowed movement: " + pieceToPos._1,
             () -> allowedEndPos.get(pieceToPos._1).get().toJavaStream()
                 .forEach(pieceToAllowedPos -> {
-                  Game game = GameBuilder.fromGameState(initialGameState).build();
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
                   game.movePiece(game.getCurrentGameState().currentPlayer,
                       startPos.get(pieceToPos._1).get(),
                       pieceToAllowedPos,
@@ -197,7 +214,7 @@ class GameTest {
 
     // Want to test from initial pos
     GameState initialGameState = GameStateBuilder
-        .fromStandardInitialPositions()
+        .fromStandardInitialState()
         .build();
 
     Map<String, Position> startingPosition =
@@ -372,7 +389,7 @@ class GameTest {
 
     // Want to test from initial pos with white going first
     GameState initialGameState = GameStateBuilder
-        .fromStandardInitialPositions()
+        .fromStandardInitialState()
         .setCurrentPlayer(Player.gote)
         .build();
 

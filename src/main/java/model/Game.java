@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Internal representation of a Shogi game. Tracks game history.
+ * Internal representation of a Shogi game. Tracks game history and knows custom rules.
  */
 class Game {
 
