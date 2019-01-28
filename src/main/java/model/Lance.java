@@ -11,7 +11,34 @@ class Lance extends Piece {
 
   @Override
   Set<Position> validPlacesToMove(Player player, Board board, Position from) {
-    return HashSet.of();
+    return nextForward(player, board, from);
+  }
+
+  private Set<Position> nextForward(Player player, Board board, Position from) {
+
+    Position nextPosition;
+
+    if (player.equals(Player.sente)) {
+      nextPosition = Position.of(from.file, from.rank - 1);
+    } else {
+      nextPosition = Position.of(from.file, from.rank + 1);
+    }
+
+    if (nextPosition.rank > 9
+        || nextPosition.file > 9
+        || nextPosition.rank < 1
+        || nextPosition.file < 1) {
+      return HashSet.of();
+    }
+
+    if (board.getPiece(nextPosition).isEmpty()) {
+      return HashSet.of(nextPosition).union(nextForward(player, board, nextPosition));
+    } else if (board.getPiece(nextPosition).get().ownedBy.equals(player)) {
+      return HashSet.of();
+    } else {
+      return HashSet.of(nextPosition);
+    }
+
   }
 
   @Override
