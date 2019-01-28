@@ -1,17 +1,22 @@
 package model;
 
 import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
 
 class Knight extends Piece {
+
+  private static Movement movement = CompositeMovement.from(
+      HashSet.of(
+          new StepMovement(-2, 1),
+          new StepMovement(-2, -1)
+      ));
 
   Knight(Player ownedBy) {
     super(ownedBy);
   }
 
   @Override
-  Set<Position> validPlacesToMove(Player player, Board board, Position from) {
-    return HashSet.of();
+  Movement getPieceMovement() {
+    return movement;
   }
 
   @Override

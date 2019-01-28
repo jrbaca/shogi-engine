@@ -1,17 +1,24 @@
 package model;
 
 import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
 
 class Rook extends Piece {
+
+  private static Movement movement = CompositeMovement.from(
+      HashSet.of(
+          new RangeMovement(-1, 0),
+          new RangeMovement(1, 0),
+          new RangeMovement(0, -1),
+          new RangeMovement(0, 1)
+      ));
 
   Rook(Player ownedBy) {
     super(ownedBy);
   }
 
   @Override
-  Set<Position> validPlacesToMove(Player player, Board board, Position from) {
-    return HashSet.of();
+  Movement getPieceMovement() {
+    return movement;
   }
 
   @Override

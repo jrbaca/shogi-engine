@@ -230,7 +230,6 @@ class GameTest {
                 Position.of(4, 8),
                 Position.of(5, 8)),
             "Silver", HashSet.of(
-                Position.of(2, 8),
                 Position.of(3, 8),
                 Position.of(4, 8)
             ),
@@ -266,7 +265,6 @@ class GameTest {
         HashMap.of(
             "King", HashSet.of(
                 Position.of(6, 5),
-                Position.of(5, 5),
                 Position.of(4, 5),
                 Position.of(6, 4),
                 Position.of(5, 4),
@@ -381,8 +379,8 @@ class GameTest {
     Map<String, Position> startingPosition =
         HashMap.of(
             "King", Position.of(5, 1),
-            "Rook", Position.of(2, 2),
-            "Bishop", Position.of(8, 2),
+            "Rook", Position.of(8, 2),
+            "Bishop", Position.of(2, 2),
             "Gold", Position.of(4, 1),
             "Silver", Position.of(3, 1),
             "Knight", Position.of(2, 1),
@@ -396,19 +394,18 @@ class GameTest {
                 Position.of(5, 2),
                 Position.of(4, 2)),
             "Rook", HashSet.of(
-                Position.of(1, 2),
                 Position.of(3, 2),
                 Position.of(4, 2),
                 Position.of(5, 2),
                 Position.of(6, 2),
-                Position.of(7, 2)),
+                Position.of(7, 2),
+                Position.of(9, 2)),
             "Bishop", HashSet.of(),
             "Gold", HashSet.of(
                 Position.of(3, 2),
                 Position.of(4, 2),
                 Position.of(5, 2)),
             "Silver", HashSet.of(
-                Position.of(2, 2),
                 Position.of(3, 2),
                 Position.of(4, 2)
             ),

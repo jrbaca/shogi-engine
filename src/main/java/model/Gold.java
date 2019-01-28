@@ -1,17 +1,26 @@
 package model;
 
 import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
 
 class Gold extends Piece {
+
+  private static Movement movement = CompositeMovement.from(
+      HashSet.of(
+          new StepMovement(-1, 0),
+          new StepMovement(-1, 1),
+          new StepMovement(-1, -1),
+          new StepMovement(0, 1),
+          new StepMovement(0, -1),
+          new StepMovement(1, 0)
+      ));
 
   Gold(Player ownedBy) {
     super(ownedBy);
   }
 
   @Override
-  Set<Position> validPlacesToMove(Player player, Board board, Position from) {
-    return HashSet.of();
+  Movement getPieceMovement() {
+    return movement;
   }
 
   @Override
