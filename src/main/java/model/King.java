@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class King extends Piece {
 
-  private static final Movement movement = CompositeMovement.from(
+  static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new StepMovement(0, -1),
           new StepMovement(0, 1),
@@ -16,13 +16,33 @@ class King extends Piece {
           new StepMovement(1, 1)
       ));
 
-  King(Player ownedBy) {
-    super(ownedBy);
+  King(Player ownedBy, boolean promoted) {
+    super(ownedBy, promoted);
   }
 
   @Override
   Movement getPieceMovement() {
     return movement;
+  }
+
+  @Override
+  boolean promotionIsForced(Player player, Position toPos) {
+    return false;
+  }
+
+  @Override
+  Piece getCopy() {
+    return new King(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted) {
+    return new King(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted, Player owner) {
+    return new King(owner, promoted);
   }
 
   @Override

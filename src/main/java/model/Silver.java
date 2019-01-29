@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Silver extends Piece {
 
-  private static final Movement movement = CompositeMovement.from(
+  static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new StepMovement(0, -1),
           new StepMovement(1, -1),
@@ -13,17 +13,47 @@ class Silver extends Piece {
           new StepMovement(-1, 1)
       ));
 
-  Silver(Player ownedBy) {
-    super(ownedBy);
+  private static final Movement promotedMovement = Gold.movement;
+
+  Silver(Player ownedBy, boolean promoted) {
+    super(ownedBy, promoted);
   }
 
   @Override
   Movement getPieceMovement() {
-    return movement;
+    if (promoted) {
+      return promotedMovement;
+    } else {
+      return movement;
+    }
+  }
+
+  @Override
+  boolean promotionIsForced(Player player, Position toPos) {
+    return false;
+  }
+
+  @Override
+  Piece getCopy() {
+    return new Silver(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted) {
+    return new Silver(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted, Player owner) {
+    return new Silver(owner, promoted);
   }
 
   @Override
   public String toString() {
-    return "銀";
+    if (promoted) {
+      return "全";
+    } else {
+      return "銀";
+    }
   }
 }

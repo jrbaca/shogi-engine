@@ -7,7 +7,7 @@ import io.vavr.control.Option;
  */
 class GameState {
 
-  private final Board board;
+  final Board board;
 
   private final Hand senteHand;
 
@@ -35,7 +35,7 @@ class GameState {
     if (!moveIsValid(player, fromPos, toPos, promotes)) {
       return Option.none();
     }
-    return Option.some(movePieceAndGetNewGameState(fromPos, toPos));
+    return Option.some(movePieceAndGetNewGameState(fromPos, toPos, promotes));
   }
 
   private boolean moveIsValid(Player player, Position fromPos, Position toPos,
@@ -43,12 +43,14 @@ class GameState {
     return pieceExists(fromPos)
         && isCurrentTurn(player)
         && ownsPiece(player, fromPos)
-        && pieceHasAbilityToMoveToPosition(fromPos, toPos);
+        && pieceHasAbilityToMoveToPosition(fromPos, toPos)
+        && promotionIsLegal(player, fromPos, toPos, promotes);
   }
 
-  private GameState movePieceAndGetNewGameState(Position fromPos, Position toPos) {
+  private GameState movePieceAndGetNewGameState(Position fromPos, Position toPos,
+      boolean promotes) {
     Player nextPlayer = getNextPlayer();
-    Board newBoard = getBoardAfterMovingPiece(fromPos, toPos);
+    Board newBoard = getBoardAfterMovingPiece(fromPos, toPos, promotes);
     return new GameState(newBoard, senteHand, goteHand, nextPlayer);
   }
 
@@ -70,6 +72,25 @@ class GameState {
         .contains(toPos);
   }
 
+  private boolean promotionIsLegal(Player player, Position fromPos, Position toPos,
+      boolean promotes) {
+
+    // if it has to promote and does, then it must be legal
+    if (board.getPiece(fromPos).get().promotionIsForced(player, toPos)) {
+      return promotes;
+    }
+
+    if (promotes) {
+      if (player.equals(Player.sente)) {
+        return fromPos.rank <= 3 || toPos.rank <= 3;
+      } else {
+        return fromPos.rank >= 7 || toPos.rank >= 7;
+      }
+    } else {
+      return true;
+    }
+  }
+
   private Player getNextPlayer() {
     if (currentPlayer == Player.sente) {
       return Player.gote;
@@ -78,13 +99,22 @@ class GameState {
     }
   }
 
-  private Board getBoardAfterMovingPiece(Position fromPos, Position toPos) {
-    Piece pieceToMove = board.getPiece(fromPos).get();
+  private Board getBoardAfterMovingPiece(Position fromPos, Position toPos, boolean promotes) {
+    Piece newPiece = getCopyOfPiece(fromPos, promotes);
+
+    // TODO might be a weird issue with pieces being referenced from multiple boards
     // TODO transfer piece to hand if capture
-    // TODO this might cause some issues with board history
     return board
         .setPiece(fromPos, null)
-        .setPiece(toPos, pieceToMove);
+        .setPiece(toPos, newPiece);
+  }
+
+  private Piece getCopyOfPiece(Position fromPos, boolean promotes) {
+    if (promotes) {
+      return board.getPiece(fromPos).get().getCopy(true);
+    } else {
+      return board.getPiece(fromPos).get().getCopy();
+    }
   }
 
   @Override

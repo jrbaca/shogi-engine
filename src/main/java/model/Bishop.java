@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Bishop extends Piece {
 
-  private static final Movement movement = CompositeMovement.from(
+  static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new RangeMovement(-1, -1),
           new RangeMovement(1, 1),
@@ -12,17 +12,52 @@ class Bishop extends Piece {
           new RangeMovement(-1, 1)
       ));
 
-  Bishop(Player ownedBy) {
-    super(ownedBy);
+  private static final Movement promotedMovement = CompositeMovement.from(
+      HashSet.of(
+          movement,
+          King.movement
+      )
+  );
+
+  Bishop(Player ownedBy, boolean promoted) {
+    super(ownedBy, promoted);
   }
 
   @Override
   Movement getPieceMovement() {
-    return movement;
+    if (promoted) {
+      return promotedMovement;
+    } else {
+      return movement;
+    }
+  }
+
+  @Override
+  boolean promotionIsForced(Player player, Position toPos) {
+    return false;
+  }
+
+  @Override
+  Piece getCopy() {
+    return new Bishop(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted) {
+    return new Bishop(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted, Player owner) {
+    return new Bishop(owner, promoted);
   }
 
   @Override
   public String toString() {
-    return "角";
+    if (promoted) {
+      return "馬";
+    } else {
+      return "角";
+    }
   }
 }

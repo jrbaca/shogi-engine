@@ -4,22 +4,61 @@ import io.vavr.collection.HashSet;
 
 class Pawn extends Piece {
 
-  private static final Movement movement = CompositeMovement.from(
+  static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new StepMovement(0, -1)
       ));
 
-  Pawn(Player ownedBy) {
-    super(ownedBy);
+  private static final Movement promotedMovement = Gold.movement;
+
+  Pawn(Player ownedBy, boolean promoted) {
+    super(ownedBy, promoted);
   }
 
   @Override
   Movement getPieceMovement() {
-    return movement;
+    if (promoted) {
+      return promotedMovement;
+    } else {
+      return movement;
+    }
+  }
+
+  @Override
+  @SuppressWarnings("Duplicates")
+  boolean promotionIsForced(Player player, Position toPos) {
+    if (promoted) {
+      return false;
+    }
+
+    if (player.equals(Player.sente)) {
+      return toPos.rank == 1;
+    } else {
+      return toPos.rank == 9;
+    }
+  }
+
+  @Override
+  Piece getCopy() {
+    return new Pawn(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted) {
+    return new Pawn(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted, Player owner) {
+    return new Pawn(owner, promoted);
   }
 
   @Override
   public String toString() {
-    return "歩";
+    if (promoted) {
+      return "と";
+    } else {
+      return "歩";
+    }
   }
 }

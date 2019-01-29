@@ -2,6 +2,7 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.quicktheories.QuickTheory.qt;
 import static org.quicktheories.generators.SourceDSL.integers;
@@ -147,66 +148,41 @@ class GameTest {
     assertNotEquals(gs1, game.getCurrentGameState());
   }
 
-  private Stream<DynamicTest> getAllowedAndDisallowedMovementTests(
-      GameState initialGameState,
-      Map<String, Position> startPos,
-      Map<String, Set<Position>> allowedEndPos) {
-    return Stream.concat(
-        getDisallowedMovementTests(
-            initialGameState,
-            startPos,
-            allowedEndPos),
-        getAllowedMovementTests(
-            initialGameState,
-            startPos,
-            allowedEndPos)
-    );
-  }
+  private Piece getPieceFromString(String pieceName, Player owner) {
+    switch (pieceName) {
+      case "King":
+        return new King(owner, false);
+      case "Rook":
+        return new Rook(owner, false);
+      case "Bishop":
+        return new Bishop(owner, false);
+      case "Gold":
+        return new Gold(owner, false);
+      case "Silver":
+        return new Silver(owner, false);
+      case "Knight":
+        return new Knight(owner, false);
+      case "Lance":
+        return new Lance(owner, false);
+      case "Pawn":
+        return new Pawn(owner, false);
 
-  private Stream<DynamicTest> getDisallowedMovementTests(
-      GameState initialGameState,
-      Map<String, Position> startPos,
-      Map<String, Set<Position>> allowedEndPos) {
-    return startPos.toJavaStream()
-        .map(pieceToPos -> dynamicTest("Disallowed movement: " + pieceToPos._1,
-            () -> qt()
-                .forAll(
-                    integers().from(1).upToAndIncluding(9),
-                    integers().from(1).upToAndIncluding(9))
-                .assuming((i, j) -> // Ensure we don't try to move to an allowed place
-                    !allowedEndPos.get(pieceToPos._1).get()
-                        .contains(Position.of(i, j)))
-                .check((i, j) -> {
-                  Game game = GameBuilder
-                      .fromStandardRules()
-                      .fromGameState(initialGameState).build();
-                  game.movePiece(game.getCurrentGameState().currentPlayer,
-                      startPos.get(pieceToPos._1).get(),
-                      Position.of(i, j),
-                      false);
-                  // We expect the game state to stay the same if invalid move
-                  return game.getCurrentGameState().equals(initialGameState);
-                })));
-  }
+      case "PRook":
+        return new Rook(owner, true);
+      case "PBishop":
+        return new Bishop(owner, true);
+      case "PSilver":
+        return new Silver(owner, true);
+      case "PKnight":
+        return new Knight(owner, true);
+      case "PLance":
+        return new Lance(owner, true);
+      case "PPawn":
+        return new Pawn(owner, true);
 
-  private Stream<DynamicTest> getAllowedMovementTests(
-      GameState initialGameState,
-      Map<String, Position> startPos,
-      Map<String, Set<Position>> allowedEndPos) {
-    return startPos.toJavaStream()
-        .map(pieceToPos -> dynamicTest("Allowed movement: " + pieceToPos._1,
-            () -> allowedEndPos.get(pieceToPos._1).get().toJavaStream()
-                .forEach(pieceToAllowedPos -> {
-                  Game game = GameBuilder
-                      .fromStandardRules()
-                      .fromGameState(initialGameState).build();
-                  game.movePiece(game.getCurrentGameState().currentPlayer,
-                      startPos.get(pieceToPos._1).get(),
-                      pieceToAllowedPos,
-                      false);
-                  // We expect the game state to change for valid moves
-                  assertNotEquals(initialGameState, game.getCurrentGameState());
-                })));
+      default:
+        throw new RuntimeException("not a piece");
+    }
   }
 
   @TestFactory
@@ -276,9 +252,17 @@ class GameTest {
             "Silver", Position.of(5, 5),
             "Knight", Position.of(5, 5),
             "Lance", Position.of(5, 5),
-            "Pawn", Position.of(5, 5));
+            "Pawn", Position.of(5, 5))
+            .merge(HashMap.of(
+                "PRook", Position.of(5, 5),
+                "PBishop", Position.of(5, 5),
+                "PSilver", Position.of(5, 5),
+                "PKnight", Position.of(5, 5),
+                "PLance", Position.of(5, 5),
+                "PPawn", Position.of(5, 5)
+            ));
 
-    Map<String, Set<Position>> allowedMovesFromStartingPosition =
+    Map<String, Set<Position>> regularAllowedMoves =
         HashMap.of(
             "King", HashSet.of(
                 Position.of(6, 5),
@@ -340,12 +324,92 @@ class GameTest {
                 Position.of(4, 3),
                 Position.of(6, 3)),
             "Lance", HashSet.of(
-                Position.of(5, 1),
                 Position.of(5, 2),
                 Position.of(5, 3),
                 Position.of(5, 4)),
             "Pawn", HashSet.of(
                 Position.of(5, 4)));
+
+    Map<String, Set<Position>> promotedAllowedMoves = HashMap.of(
+        "PRook", HashSet.of(
+            Position.of(1, 5),
+            Position.of(2, 5),
+            Position.of(3, 5),
+            Position.of(4, 5),
+            Position.of(6, 5),
+            Position.of(7, 5),
+            Position.of(8, 5),
+            Position.of(9, 5),
+            Position.of(5, 1),
+            Position.of(5, 2),
+            Position.of(5, 3),
+            Position.of(5, 4),
+            Position.of(5, 6),
+            Position.of(5, 7),
+            Position.of(5, 8),
+            Position.of(5, 9),
+            Position.of(4, 4),
+            Position.of(4, 6),
+            Position.of(6, 4),
+            Position.of(6, 6)
+        ),
+        "PBishop", HashSet.of(
+            Position.of(1, 1),
+            Position.of(2, 2),
+            Position.of(3, 3),
+            Position.of(4, 4),
+            Position.of(6, 6),
+            Position.of(7, 7),
+            Position.of(8, 8),
+            Position.of(9, 9),
+            Position.of(9, 1),
+            Position.of(8, 2),
+            Position.of(7, 3),
+            Position.of(6, 4),
+            Position.of(4, 6),
+            Position.of(3, 7),
+            Position.of(2, 8),
+            Position.of(1, 9),
+            Position.of(5, 6),
+            Position.of(5, 4),
+            Position.of(6, 5),
+            Position.of(4, 5)
+        ),
+        "PSilver", HashSet.of(
+            Position.of(6, 4),
+            Position.of(5, 4),
+            Position.of(4, 4),
+            Position.of(6, 5),
+            Position.of(4, 5),
+            Position.of(5, 6)
+        ),
+        "PKnight", HashSet.of(
+            Position.of(6, 4),
+            Position.of(5, 4),
+            Position.of(4, 4),
+            Position.of(6, 5),
+            Position.of(4, 5),
+            Position.of(5, 6)
+        ),
+        "PLance", HashSet.of(
+            Position.of(6, 4),
+            Position.of(5, 4),
+            Position.of(4, 4),
+            Position.of(6, 5),
+            Position.of(4, 5),
+            Position.of(5, 6)
+        ),
+        "PPawn", HashSet.of(
+            Position.of(6, 4),
+            Position.of(5, 4),
+            Position.of(4, 4),
+            Position.of(6, 5),
+            Position.of(4, 5),
+            Position.of(5, 6)
+        ));
+
+    Map<String, Set<Position>> allowedMovesFromStartingPosition =
+        regularAllowedMoves.merge(promotedAllowedMoves);
 
     return startingPosition.toJavaStream()
         .flatMap((pieceToStartingPos) -> {
@@ -359,29 +423,6 @@ class GameTest {
               HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
               allowedMovesFromStartingPosition);
         });
-  }
-
-  private Piece getPieceFromString(String pieceName, Player owner) {
-    switch (pieceName) {
-      case "King":
-        return new King(owner);
-      case "Rook":
-        return new Rook(owner);
-      case "Bishop":
-        return new Bishop(owner);
-      case "Gold":
-        return new Gold(owner);
-      case "Silver":
-        return new Silver(owner);
-      case "Knight":
-        return new Knight(owner);
-      case "Lance":
-        return new Lance(owner);
-      case "Pawn":
-        return new Pawn(owner);
-      default:
-        throw new RuntimeException("not a piece");
-    }
   }
 
   @TestFactory
@@ -440,13 +481,353 @@ class GameTest {
         allowedMovesFromStartingPosition);
   }
 
-  // TODO test can move to enemy positions
+  private Stream<DynamicTest> getAllowedAndDisallowedMovementTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedEndPos) {
+    return Stream.concat(
+        getDisallowedMovementTests(
+            initialGameState,
+            startPos,
+            allowedEndPos),
+        getAllowedMovementTests(
+            initialGameState,
+            startPos,
+            allowedEndPos)
+    );
+  }
 
-  // TODO test cant move to friendly positions
+  private Stream<DynamicTest> getDisallowedMovementTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedEndPos) {
+    return startPos.toJavaStream()
+        .map(pieceToPos -> dynamicTest("Disallowed movement: " + pieceToPos._1,
+            () -> qt()
+                .forAll(
+                    integers().from(1).upToAndIncluding(9),
+                    integers().from(1).upToAndIncluding(9))
+                .assuming((i, j) -> // Ensure we don't try to move to an allowed place
+                    !allowedEndPos.get(pieceToPos._1).get()
+                        .contains(Position.of(i, j)))
+                .check((i, j) -> {
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
+                  game.movePiece(game.getCurrentGameState().currentPlayer,
+                      startPos.get(pieceToPos._1).get(),
+                      Position.of(i, j),
+                      false);
+                  // We expect the game state to stay the same if invalid move
+                  return game.getCurrentGameState().equals(initialGameState);
+                })));
+  }
 
-  // TODO test cant move off board
+  private Stream<DynamicTest> getAllowedMovementTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedEndPos) {
+    return startPos.toJavaStream()
+        .map(pieceToPos -> dynamicTest("Allowed movement: " + pieceToPos._1,
+            () -> allowedEndPos.get(pieceToPos._1).get().toJavaStream()
+                .forEach(pieceToAllowedPos -> {
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
+                  game.movePiece(game.getCurrentGameState().currentPlayer,
+                      startPos.get(pieceToPos._1).get(),
+                      pieceToAllowedPos,
+                      false);
+                  // We expect the game state to change for valid moves
+                  assertNotEquals(initialGameState, game.getCurrentGameState());
+                })));
+  }
 
-  // TODO test promotion
+  @TestFactory
+  Stream<DynamicTest> blackPiecesCanPromoteMovingIntoPromotionZone() {
+
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "Rook", Position.of(5, 5)
+        );
+
+    Map<String, Set<Position>> allowedPromotionPositions =
+        HashMap.of(
+            "Rook", HashSet.of(
+                Position.of(5, 1),
+                Position.of(5, 2),
+                Position.of(5, 3))
+        );
+
+    return startingPosition.toJavaStream()
+        .flatMap((pieceToStartingPos) -> {
+
+          // Build game state from specified initial position
+          GameState initialGameState =
+              GameStateBuilder
+                  .fromEmptyState()
+                  .setPiece(
+                      pieceToStartingPos._2,
+                      getPieceFromString(pieceToStartingPos._1, Player.sente))
+                  .build();
+
+          return getAllowedAndDisallowedPromotionTests(
+              initialGameState,
+              HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
+              allowedPromotionPositions);
+        });
+  }
+
+  @TestFactory
+  Stream<DynamicTest> blackPiecesCanPromoteMovingFromPromotionZone() {
+
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "Rook", Position.of(5, 2)
+        );
+
+    Map<String, Set<Position>> allowedPromotionPositions =
+        HashMap.of(
+            "Rook", HashSet.of(
+                Position.of(5, 1),
+                Position.of(5, 3),
+                Position.of(5, 4),
+                Position.of(5, 5),
+                Position.of(5, 6),
+                Position.of(5, 7),
+                Position.of(5, 8),
+                Position.of(5, 9),
+                Position.of(1, 2),
+                Position.of(2, 2),
+                Position.of(3, 2),
+                Position.of(4, 2),
+                Position.of(6, 2),
+                Position.of(7, 2),
+                Position.of(8, 2),
+                Position.of(9, 2))
+        );
+
+    return startingPosition.toJavaStream()
+        .flatMap((pieceToStartingPos) -> {
+
+          // Build game state from specified initial position
+          GameState initialGameState =
+              GameStateBuilder
+                  .fromEmptyState()
+                  .setPiece(
+                      pieceToStartingPos._2,
+                      getPieceFromString(pieceToStartingPos._1, Player.sente))
+                  .build();
+
+          return getAllowedAndDisallowedPromotionTests(
+              initialGameState,
+              HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
+              allowedPromotionPositions);
+        });
+  }
+
+  @TestFactory
+  Stream<DynamicTest> whitePiecesCanPromoteMovingIntoPromotionZone() {
+
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "Rook", Position.of(5, 5)
+        );
+
+    Map<String, Set<Position>> allowedPromotionPositions =
+        HashMap.of(
+            "Rook", HashSet.of(
+                Position.of(5, 7),
+                Position.of(5, 8),
+                Position.of(5, 9))
+        );
+
+    return startingPosition.toJavaStream()
+        .flatMap((pieceToStartingPos) -> {
+
+          // Build game state from specified initial position
+          GameState initialGameState =
+              GameStateBuilder
+                  .fromEmptyState()
+                  .setCurrentPlayer(Player.gote)
+                  .setPiece(
+                      pieceToStartingPos._2,
+                      getPieceFromString(pieceToStartingPos._1, Player.gote))
+                  .build();
+
+          return getAllowedAndDisallowedPromotionTests(
+              initialGameState,
+              HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
+              allowedPromotionPositions);
+        });
+  }
+
+  @TestFactory
+  Stream<DynamicTest> whitePiecesCanPromoteMovingFromPromotionZone() {
+
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "Rook", Position.of(5, 8)
+        );
+
+    Map<String, Set<Position>> allowedPromotionPositions =
+        HashMap.of(
+            "Rook", HashSet.of(
+                Position.of(5, 1),
+                Position.of(5, 2),
+                Position.of(5, 3),
+                Position.of(5, 4),
+                Position.of(5, 5),
+                Position.of(5, 6),
+                Position.of(5, 7),
+                Position.of(5, 9),
+                Position.of(1, 8),
+                Position.of(2, 8),
+                Position.of(3, 8),
+                Position.of(4, 8),
+                Position.of(6, 8),
+                Position.of(7, 8),
+                Position.of(8, 8),
+                Position.of(9, 8))
+        );
+
+    return startingPosition.toJavaStream()
+        .flatMap((pieceToStartingPos) -> {
+
+          // Build game state from specified initial position
+          GameState initialGameState =
+              GameStateBuilder
+                  .fromEmptyState()
+                  .setCurrentPlayer(Player.gote)
+                  .setPiece(
+                      pieceToStartingPos._2,
+                      getPieceFromString(pieceToStartingPos._1, Player.gote))
+                  .build();
+
+          return getAllowedAndDisallowedPromotionTests(
+              initialGameState,
+              HashMap.of(pieceToStartingPos._1, pieceToStartingPos._2),
+              allowedPromotionPositions);
+        });
+  }
+
+  private Stream<DynamicTest> getAllowedAndDisallowedPromotionTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedEndPos) {
+    return Stream.concat(
+        getDisallowedPromotionTests(
+            initialGameState,
+            startPos,
+            allowedEndPos),
+        getAllowedPromotionTests(
+            initialGameState,
+            startPos,
+            allowedEndPos)
+    );
+  }
+
+  private Stream<DynamicTest> getDisallowedPromotionTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedEndPos) {
+    return startPos.toJavaStream()
+        .map(pieceToPos -> dynamicTest("Disallowed promotion: " + pieceToPos._1,
+            () -> qt()
+                .forAll(
+                    integers().from(1).upToAndIncluding(9),
+                    integers().from(1).upToAndIncluding(9))
+                .assuming((i, j) -> // Ensure we don't try to move to an allowed promotion position
+                    !allowedEndPos.get(pieceToPos._1).get()
+                        .contains(Position.of(i, j)))
+                .check((i, j) -> {
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
+                  game.movePiece(game.getCurrentGameState().currentPlayer,
+                      startPos.get(pieceToPos._1).get(),
+                      Position.of(i, j),
+                      true);
+                  // We expect the game state to stay the same if invalid promotion
+                  return game.getCurrentGameState().equals(initialGameState);
+                })));
+  }
+
+  private Stream<DynamicTest> getAllowedPromotionTests(
+      GameState initialGameState,
+      Map<String, Position> startPos,
+      Map<String, Set<Position>> allowedPromotionPos) {
+    return startPos.toJavaStream()
+        .map(pieceToPos -> dynamicTest("Allowed promotion: " + pieceToPos._1,
+            () -> allowedPromotionPos.get(pieceToPos._1).get().toJavaStream()
+                .forEach(pieceToPromotionPos -> {
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(initialGameState).build();
+                  game.movePiece(
+                      game.getCurrentGameState().currentPlayer,
+                      startPos.get(pieceToPos._1).get(),
+                      pieceToPromotionPos,
+                      true);
+                  // We expect the piece to be promoted now
+                  assertTrue(
+                      game.getCurrentGameState()
+                          .board
+                          .getPiece(pieceToPromotionPos)
+                          .get()
+                          .promoted);
+                })));
+  }
+
+  @TestFactory
+  Stream<DynamicTest> piecesMustSometimesPromote() {
+    Map<String, Position> startingPosition =
+        HashMap.of(
+            "Pawn", Position.of(1, 2),
+            "Knight", Position.of(5, 3),
+            "Knight", Position.of(5, 4),
+            "Lance", Position.of(9, 2),
+            "Lance", Position.of(9, 9)
+        );
+
+    Map<String, Set<Position>> forcedPromotionMoves =
+        HashMap.of(
+            "Pawn", HashSet.of(
+                Position.of(1, 1)),
+            "Knight", HashSet.of(
+                Position.of(4, 2),
+                Position.of(4, 1),
+                Position.of(6, 2),
+                Position.of(6, 1)),
+            "Lance", HashSet.of(
+                Position.of(9, 1)));
+
+    return startingPosition.toJavaStream()
+        .map(pieceToPos -> dynamicTest("Forced promotion: " + pieceToPos._1,
+            () -> forcedPromotionMoves.get(pieceToPos._1).get().toJavaStream()
+                .forEach(pieceToPromotionPos -> {
+                  Game game = GameBuilder
+                      .fromStandardRules()
+                      .fromGameState(
+                          GameStateBuilder
+                              .fromEmptyState()
+                              .setPiece(
+                                  pieceToPos._2,
+                                  getPieceFromString(pieceToPos._1, Player.sente))
+                              .build()).build();
+
+                  // try to move but state should stay the same since illegal
+                  GameState initialGameState = game.getCurrentGameState();
+                  game.movePiece(
+                      Player.sente,
+                      pieceToPos._2,
+                      pieceToPromotionPos,
+                      false);
+
+                  assertEquals(initialGameState, game.getCurrentGameState());
+                })
+        ));
+  }
 
   // TODO test check
 

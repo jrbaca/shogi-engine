@@ -4,7 +4,7 @@ import io.vavr.collection.HashSet;
 
 class Rook extends Piece {
 
-  private static final Movement movement = CompositeMovement.from(
+  static final Movement movement = CompositeMovement.from(
       HashSet.of(
           new RangeMovement(0, -1),
           new RangeMovement(0, 1),
@@ -12,17 +12,52 @@ class Rook extends Piece {
           new RangeMovement(1, 0)
       ));
 
-  Rook(Player ownedBy) {
-    super(ownedBy);
+  private static final Movement promotedMovement = CompositeMovement.from(
+      HashSet.of(
+          movement,
+          King.movement
+      )
+  );
+
+  Rook(Player ownedBy, boolean promoted) {
+    super(ownedBy, promoted);
   }
 
   @Override
   Movement getPieceMovement() {
-    return movement;
+    if (promoted) {
+      return promotedMovement;
+    } else {
+      return movement;
+    }
+  }
+
+  @Override
+  boolean promotionIsForced(Player player, Position toPos) {
+    return false;
+  }
+
+  @Override
+  Piece getCopy() {
+    return new Rook(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted) {
+    return new Rook(ownedBy, promoted);
+  }
+
+  @Override
+  Piece getCopy(boolean promoted, Player owner) {
+    return new Rook(owner, promoted);
   }
 
   @Override
   public String toString() {
-    return "飛";
+    if (promoted) {
+      return "龍";
+    } else {
+      return "飛";
+    }
   }
 }
