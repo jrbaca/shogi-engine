@@ -1,5 +1,7 @@
 package model;
 
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import io.vavr.control.Option;
 
 /**
@@ -9,9 +11,7 @@ class GameState {
 
   final Board board;
 
-  private final Hand senteHand;
-
-  private final Hand goteHand;
+  final Map<Player, Hand> playerHandMap;
 
   final Player currentPlayer;
 
@@ -20,8 +20,20 @@ class GameState {
    */
   GameState(Board board, Hand senteHand, Hand goteHand, Player currentPlayer) {
     this.board = board;
-    this.senteHand = senteHand;
-    this.goteHand = goteHand;
+
+    this.playerHandMap = HashMap.of(
+        Player.sente, senteHand,
+        Player.gote, goteHand
+    );
+    this.currentPlayer = currentPlayer;
+  }
+
+  /**
+   * Creates GameStates manually. It might be worth it to use {@link GameStateBuilder} instead.
+   */
+  GameState(Board board, Map<Player, Hand> playerHandMap, Player currentPlayer) {
+    this.board = board;
+    this.playerHandMap = playerHandMap;
     this.currentPlayer = currentPlayer;
   }
 
@@ -35,6 +47,7 @@ class GameState {
     if (!moveIsValid(player, fromPos, toPos, promotes)) {
       return Option.none();
     }
+
     return Option.some(movePieceAndGetNewGameState(fromPos, toPos, promotes));
   }
 
@@ -50,8 +63,9 @@ class GameState {
   private GameState movePieceAndGetNewGameState(Position fromPos, Position toPos,
       boolean promotes) {
     Player nextPlayer = getNextPlayer();
+    Map<Player, Hand> newHand = moveCapturedPieceToHand(toPos);
     Board newBoard = getBoardAfterMovingPiece(fromPos, toPos, promotes);
-    return new GameState(newBoard, senteHand, goteHand, nextPlayer);
+    return new GameState(newBoard, newHand, nextPlayer);
   }
 
   private boolean pieceExists(Position fromPos) {
@@ -99,8 +113,21 @@ class GameState {
     }
   }
 
+  private Map<Player, Hand> moveCapturedPieceToHand(Position toPos) {
+    Option<Piece> pieceToCapture = board.getPiece(toPos);
+
+    if (pieceToCapture.isDefined()) {
+      return playerHandMap.put(currentPlayer,
+          playerHandMap.get(currentPlayer).get().addPiece(pieceToCapture.get().getCopy(false)));
+    } else {
+      return playerHandMap.takeWhile(a -> true); // duplicate the hand
+    }
+
+
+  }
+
   private Board getBoardAfterMovingPiece(Position fromPos, Position toPos, boolean promotes) {
-    Piece newPiece = getCopyOfPiece(fromPos, promotes);
+    Piece newPiece = getCopyOfPieceAndPossiblyPromote(fromPos, promotes);
 
     // TODO might be a weird issue with pieces being referenced from multiple boards
     // TODO transfer piece to hand if capture
@@ -109,7 +136,7 @@ class GameState {
         .setPiece(toPos, newPiece);
   }
 
-  private Piece getCopyOfPiece(Position fromPos, boolean promotes) {
+  private Piece getCopyOfPieceAndPossiblyPromote(Position fromPos, boolean promotes) {
     if (promotes) {
       return board.getPiece(fromPos).get().getCopy(true);
     } else {
@@ -119,6 +146,10 @@ class GameState {
 
   @Override
   public String toString() {
-    return board.toString();
+    return String.format(
+        "%s\n\n%s\n\n%s",
+        playerHandMap.get(Player.gote).get(),
+        board.toString(),
+        playerHandMap.get(Player.sente).get());
   }
 }

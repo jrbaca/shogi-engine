@@ -20,6 +20,9 @@ class Board {
     return new Board(newBoard);
   }
 
+  /**
+   * Returns a copy of the piece at a Position.
+   */
   Option<Piece> getPiece(Position position) {
     Piece selectedPiece = board[position.file - 1][position.rank - 1];
     if (selectedPiece != null) {

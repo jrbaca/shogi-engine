@@ -28,7 +28,8 @@ class GameTest {
     String gameStringRepresentation = game.getStringRepresentation();
     System.out.println(gameStringRepresentation);
     assertEquals(
-        "[香][桂][銀][金][王][金][銀][桂][香]\n"
+        "{ }\n\n"
+            + "[香][桂][銀][金][王][金][銀][桂][香]\n"
             + "[・][飛][・][・][・][・][・][角][・]\n"
             + "[歩][歩][歩][歩][歩][歩][歩][歩][歩]\n"
             + "[・][・][・][・][・][・][・][・][・]\n"
@@ -36,7 +37,8 @@ class GameTest {
             + "[・][・][・][・][・][・][・][・][・]\n"
             + "[歩][歩][歩][歩][歩][歩][歩][歩][歩]\n"
             + "[・][角][・][・][・][・][・][飛][・]\n"
-            + "[香][桂][銀][金][玉][金][銀][桂][香]",
+            + "[香][桂][銀][金][玉][金][銀][桂][香]\n\n"
+            + "{ }",
         gameStringRepresentation);
 
   }
@@ -827,6 +829,30 @@ class GameTest {
                   assertEquals(initialGameState, game.getCurrentGameState());
                 })
         ));
+  }
+
+  @Test
+  void capturedPiecesAreAddedToHand() {
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromGameState(
+            GameStateBuilder
+                .fromEmptyState()
+                .setPiece(Position.of(5, 4), new Gold(Player.gote, false))
+                .setPiece(Position.of(5, 5), new Gold(Player.sente, false))
+                .build()).build();
+
+    game.movePiece(
+        Player.sente,
+        Position.of(5, 5),
+        Position.of(5, 4),
+        false);
+
+    assertEquals(1,
+        game
+            .getCurrentGameState()
+            .playerHandMap.get(Player.sente).get()
+            .size());
   }
 
   // TODO test check

@@ -20,8 +20,8 @@ class GameStateBuilder {
   static GameStateBuilder fromEmptyState() {
     GameStateBuilder gameStateBuilder = new GameStateBuilder();
     gameStateBuilder.board = new Board();
-    gameStateBuilder.senteHand = new Hand();
-    gameStateBuilder.goteHand = new Hand();
+    gameStateBuilder.senteHand = Hand.makeNew();
+    gameStateBuilder.goteHand = Hand.makeNew();
     gameStateBuilder.currentPlayer = Player.sente;
 
     return gameStateBuilder;
