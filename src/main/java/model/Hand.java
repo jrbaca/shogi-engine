@@ -1,29 +1,34 @@
 package model;
 
-import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
+import io.vavr.collection.List;
 
 class Hand {
 
-  private Set<Piece> handContents;
+  private List<Piece> handContents;
 
-  Hand(Set<Piece> handContents) {
+  private Hand(List<Piece> handContents) {
     this.handContents = handContents;
   }
 
   static Hand makeNew() {
-    return new Hand(HashSet.empty());
+    return new Hand(List.empty());
   }
 
   /**
    * Returns a copy with the added piece.
    */
   Hand addPiece(Piece piece) {
-    return new Hand(handContents.add(piece));
+    return new Hand(handContents.append(piece));
   }
 
   Hand removePiece(Piece piece) {
     return new Hand(handContents.remove(piece));
+  }
+
+  boolean contains(Piece piece) {
+    return handContents
+        .map(currentPiece -> currentPiece.equals(piece))
+        .fold(false, (l, r) -> l || r);
   }
 
   int size() {

@@ -38,6 +38,14 @@ class Game {
     }
   }
 
+  void dropPiece(Player player, Piece piece, Position position) {
+    Option<GameState> newGameState = getCurrentGameState().dropPiece(player, piece, position);
+
+    if (newGameState.isDefined()) {
+      addNewGameState(newGameState.get());
+    }
+  }
+
   String getStringRepresentation() {
     return getCurrentGameState().toString();
   }

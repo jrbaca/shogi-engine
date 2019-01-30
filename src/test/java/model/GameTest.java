@@ -1,6 +1,7 @@
 package model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -853,6 +854,101 @@ class GameTest {
             .getCurrentGameState()
             .playerHandMap.get(Player.sente).get()
             .size());
+  }
+
+  @Test
+  void droppedPiecesAreRemovedFromHandAndAppearOnBoard() {
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromGameState(
+            GameStateBuilder
+                .fromEmptyState()
+                .setPiece(Position.of(1, 1), new Gold(Player.gote, false))
+                .setPiece(Position.of(5, 4), new Gold(Player.gote, false))
+                .setPiece(Position.of(5, 5), new Gold(Player.sente, false))
+                .build()).build();
+
+    // capture piece and add to hand
+    game.movePiece(
+        Player.sente,
+        Position.of(5, 5),
+        Position.of(5, 4),
+        false);
+
+    // Dummy white move
+    game.movePiece(
+        Player.gote,
+        Position.of(1, 1),
+        Position.of(1, 2),
+        false);
+
+    // Sanity check
+    assertFalse(
+        game
+            .getCurrentGameState()
+            .board
+            .getPiece(Position.of(9, 1))
+            .isDefined()
+    );
+
+    game.dropPiece(
+        Player.sente, new Gold(Player.sente, false), Position.of(9, 1));
+
+    assertEquals(0,
+        game
+            .getCurrentGameState()
+            .playerHandMap.get(Player.sente).get()
+            .size());
+
+    assertTrue(
+        game
+            .getCurrentGameState()
+            .board
+            .getPiece(Position.of(9, 1))
+            .isDefined()
+    );
+  }
+
+  @Test
+  void handCanContainDuplicatePieces() {
+    Game game = GameBuilder
+        .fromStandardRules()
+        .fromGameState(
+            GameStateBuilder
+                .fromEmptyState()
+                .setPiece(Position.of(5, 1), new Gold(Player.gote, false))
+                .setPiece(Position.of(5, 4), new Gold(Player.gote, false))
+                .setPiece(Position.of(5, 5), new Rook(Player.sente, false))
+                .build()).build();
+
+    // capture piece and add to hand
+    game.movePiece(
+        Player.sente,
+        Position.of(5, 5),
+        Position.of(5, 4),
+        false);
+
+    // Dummy white move
+    game.movePiece(
+        Player.gote,
+        Position.of(5, 1),
+        Position.of(5, 2),
+        false);
+
+    // Capture again
+    game.movePiece(
+        Player.sente,
+        Position.of(5, 4),
+        Position.of(5, 2),
+        false);
+
+    assertEquals(2,
+        game
+            .getCurrentGameState()
+            .playerHandMap
+            .get(Player.sente).get()
+            .size()
+    );
   }
 
   // TODO test check

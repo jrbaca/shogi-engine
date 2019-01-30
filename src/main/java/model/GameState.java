@@ -31,7 +31,7 @@ class GameState {
   /**
    * Creates GameStates manually. It might be worth it to use {@link GameStateBuilder} instead.
    */
-  GameState(Board board, Map<Player, Hand> playerHandMap, Player currentPlayer) {
+  private GameState(Board board, Map<Player, Hand> playerHandMap, Player currentPlayer) {
     this.board = board;
     this.playerHandMap = playerHandMap;
     this.currentPlayer = currentPlayer;
@@ -118,7 +118,8 @@ class GameState {
 
     if (pieceToCapture.isDefined()) {
       return playerHandMap.put(currentPlayer,
-          playerHandMap.get(currentPlayer).get().addPiece(pieceToCapture.get().getCopy(false)));
+          playerHandMap.get(currentPlayer).get()
+              .addPiece(pieceToCapture.get().getCopy(false, currentPlayer)));
     } else {
       return playerHandMap.takeWhile(a -> true); // duplicate the hand
     }
@@ -128,9 +129,6 @@ class GameState {
 
   private Board getBoardAfterMovingPiece(Position fromPos, Position toPos, boolean promotes) {
     Piece newPiece = getCopyOfPieceAndPossiblyPromote(fromPos, promotes);
-
-    // TODO might be a weird issue with pieces being referenced from multiple boards
-    // TODO transfer piece to hand if capture
     return board
         .setPiece(fromPos, null)
         .setPiece(toPos, newPiece);
@@ -142,6 +140,44 @@ class GameState {
     } else {
       return board.getPiece(fromPos).get().getCopy();
     }
+  }
+
+  Option<GameState> dropPiece(Player player, Piece piece, Position position) {
+
+    if (dropIsValid(player, piece, position)) {
+      return Option.some(dropPieceRemoveFromHandAndGetNewGameState(piece, position));
+    } else {
+      return Option.none();
+    }
+  }
+
+  private boolean dropIsValid(Player player, Piece piece, Position position) {
+    return isCurrentTurn(player)
+        && playerHandMap.get(currentPlayer).get().contains(piece)
+        && spaceIsNotOccupied(position);
+  }
+
+  private boolean spaceIsNotOccupied(Position position) {
+    return board.getPiece(position).isEmpty();
+  }
+
+  private GameState dropPieceRemoveFromHandAndGetNewGameState(Piece piece, Position position) {
+
+    Board newBoard = getBoardAfterDroppingPiece(piece, position);
+    Map<Player, Hand> newHand = removeDroppedPieceFromHand(piece);
+    Player nextPlayer = getNextPlayer();
+
+    return new GameState(newBoard, newHand, nextPlayer);
+  }
+
+  private Board getBoardAfterDroppingPiece(Piece piece, Position position) {
+    Piece newPiece = piece.getCopy(); // Might not need to copy the piece
+    return board.setPiece(position, newPiece);
+  }
+
+  private Map<Player, Hand> removeDroppedPieceFromHand(Piece piece) {
+    return playerHandMap.put(currentPlayer,
+        playerHandMap.get(currentPlayer).get().removePiece(piece));
   }
 
   @Override

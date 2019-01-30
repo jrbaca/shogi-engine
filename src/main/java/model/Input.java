@@ -12,6 +12,7 @@ class Input {
   private Position posFrom;
   private Position posTo;
   private Boolean promotes;
+  private Piece pieceToDrop;
 
   /**
    * Processes some input and returns a runnable instance.
@@ -25,9 +26,15 @@ class Input {
     String[] args = getArgsFromCommand(command);
     input.player = getPlayerFromArgs(args).get();
     input.verb = getVerbFromArgs(args).get();
-    input.posFrom = getInitialPosFromArgs(args).get();
     input.posTo = getFinalPosFromArgs(args).get();
-    input.promotes = getPromotesFromArgs(args).get();
+
+    if (!input.verb.equals("drops")) {
+      input.posFrom = getInitialPosFromArgs(args).get();
+      input.promotes = getPromotesFromArgs(args).get();
+    } else {
+      input.pieceToDrop = getPieceToDrop(args, input.player).get();
+    }
+
 
     return input;
   }
@@ -68,6 +75,15 @@ class Input {
     return Option.of(args.length == 5 && args[4].equals("promotes"));
   }
 
+  private static Option<Piece> getPieceToDrop(String[] args, Player player) {
+    Option<Piece> pieceToDrop = Piece.getPieceFromString(args[2], player);
+    if (pieceToDrop.isDefined()) {
+      return pieceToDrop;
+    } else {
+      return Option.none();
+    }
+  }
+
   String run(Game game) {
     if (verb.equals("moves")) {
       GameState previousGameState = game.getCurrentGameState();
@@ -78,8 +94,13 @@ class Input {
         return "Couldn't move piece";
       }
     } else if (verb.equals("drops")) {
-      // TODO this
-      return "Gonna drop";
+      GameState previousGameState = game.getCurrentGameState();
+      game.dropPiece(player, pieceToDrop, posTo);
+      if (previousGameState != game.getCurrentGameState()) {
+        return "Dropped piece";
+      } else {
+        return "Couldn't drop piece";
+      }
     } else {
       return "Unrecognised command";
     }
